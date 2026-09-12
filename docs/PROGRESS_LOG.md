@@ -188,11 +188,23 @@ Firebase Console step needed before logging in will work.
 
 ## IN PROGRESS
 
-_Nothing in progress right now._
+### Step 7: Admin panel — manage projects and reviews
+**What's done so far:** The database security rules (Part A) — these
+decide who's allowed to read/write project and review data once the real
+database is connected. Waiting on you to publish them in the Firebase
+Console before the rest of Step 7 (the data layer and the admin panel
+itself) can be built and actually tested.
+**Files created:**
+- `firestore.rules` — new. Visitors can read projects/reviews; only a
+  signed-in admin can create, update, or delete them; everything else is
+  denied by default.
+**What's next:** Once you confirm the rules are published, the remaining
+parts of Step 7 — the data-saving functions, the one-time data import, the
+admin panel pages for projects/reviews, and switching the public site to
+read from the real database — will follow.
 
 ## NOT STARTED
 
-- Step 7: Admin panel — manage projects, reviews and blog posts
 - Step 8: Blog section for SEO
 - Step 9: Contact and enquiry form
 - Step 10: Social media links and embeds

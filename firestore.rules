@@ -1,0 +1,36 @@
+// WHAT THIS FILE DOES: The security guard for the database. It doesn't run
+// inside this Next.js app at all — it runs on Firebase's own servers, and
+// only takes effect once it's pasted into the Firebase Console and
+// published (see the instructions given alongside this file). Every time
+// anyone — a visitor or the admin panel — tries to read or write data,
+// Firebase checks these rules first.
+//
+// The rules below say:
+// - Anyone (including visitors who aren't signed in) can READ projects and
+//   reviews, so the public site can display them.
+// - Only someone signed in (the admin) can CREATE, UPDATE, or DELETE
+//   projects or reviews.
+// - Anything not explicitly allowed above is denied — the last rule below
+//   blocks every other collection/action by default, as a safety net.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Safety net: anything not explicitly allowed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
