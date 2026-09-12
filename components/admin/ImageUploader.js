@@ -1,17 +1,21 @@
 // WHAT THIS FILE DOES: One reusable image uploader — click to choose a
 // file, or drag an image onto it. Shows a preview before and during the
 // upload (with a progress percentage), rejects anything that isn't an
-// image or is over 5MB with a clear message, and has a remove button that
-// properly deletes the uploaded file. Also offers pasting an image URL as
-// an alternative to uploading. Used on its own (for a single image, like a
-// client photo) and inside ImageListUploader (for multiple images, like
-// project screenshots). Runs in the browser because it reacts to file
-// selection, drag events, and upload progress.
+// image or is over 5MB with a clear message, and has a remove button.
+// Also offers pasting an image URL as an alternative to uploading. Used on
+// its own (for a single image, like a client photo) and inside
+// ImageListUploader (for multiple images, like project screenshots). Runs
+// in the browser because it reacts to file selection, drag events, and
+// upload progress.
+//
+// Note: "Remove" only clears the link here — images are hosted on
+// Cloudinary's free plan, which doesn't support deleting files from the
+// browser side, so removing an image never deletes the actual file.
 
 "use client";
 
 import { useRef, useState } from "react";
-import { uploadImage, deleteImage } from "@/lib/storage";
+import { uploadImage } from "@/lib/storage";
 
 export default function ImageUploader({ value, onChange }) {
   const fileInputRef = useRef(null);
@@ -54,10 +58,7 @@ export default function ImageUploader({ value, onChange }) {
     onChange(result.url);
   }
 
-  async function handleRemove() {
-    if (value) {
-      await deleteImage(value);
-    }
+  function handleRemove() {
     onChange("");
   }
 

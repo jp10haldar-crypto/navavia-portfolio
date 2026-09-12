@@ -1,15 +1,18 @@
 // WHAT THIS FILE DOES: Manages a whole LIST of images (used for a
 // project's customer screenshots and admin screenshots) — shows every
 // image already added as a thumbnail, lets you drag thumbnails to reorder
-// them, remove any one of them (properly deleting it from storage), and
-// add more using the single ImageUploader below the list. Runs in the
-// browser because it reacts to drag events and clicks.
+// them, remove any one of them, and add more using the single
+// ImageUploader below the list. Runs in the browser because it reacts to
+// drag events and clicks.
+//
+// Note: "Remove" only takes an image out of this list — images are hosted
+// on Cloudinary's free plan, which doesn't support deleting files from the
+// browser side, so removing one here never deletes the actual file.
 
 "use client";
 
 import { useState } from "react";
 import ImageUploader from "@/components/admin/ImageUploader";
-import { deleteImage } from "@/lib/storage";
 
 export default function ImageListUploader({ value, onChange }) {
   const images = value || [];
@@ -19,8 +22,7 @@ export default function ImageListUploader({ value, onChange }) {
     onChange([...images, url]);
   }
 
-  async function handleRemove(index) {
-    await deleteImage(images[index]);
+  function handleRemove(index) {
     onChange(images.filter((_, i) => i !== index));
   }
 

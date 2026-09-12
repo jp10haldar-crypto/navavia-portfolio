@@ -1,6 +1,7 @@
 // WHAT THIS FILE DOES: The admin Dashboard, visible at /admin once signed
 // in. Shows how many projects and reviews currently exist in the database,
-// and has the one-time button to import the starter sample data. It runs
+// has the one-time button to import the starter sample data, and a
+// reminder about clearing unused images from Cloudinary manually. It runs
 // in the browser so it can fetch live counts and react to the button click.
 
 "use client";
@@ -75,6 +76,27 @@ export default function AdminDashboardPage() {
           {isSeeding ? "Importing..." : "Import Starter Data"}
         </button>
         {seedMessage && <p className="mt-3 text-sm text-muted">{seedMessage}</p>}
+      </div>
+
+      <div className="mt-6 rounded-xl border border-white/10 bg-card p-6">
+        <p className="font-semibold text-foreground">About image storage</p>
+        <p className="mt-2 text-sm text-muted">
+          Images are hosted on Cloudinary&apos;s free plan. Deleting a project
+          or review here removes it from this site, but the image files
+          themselves stay on Cloudinary (the free plan doesn&apos;t allow
+          deleting files from a website). If storage ever fills up, you can
+          clear out unused images by logging into{" "}
+          <a
+            href="https://cloudinary.com/console"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:opacity-80"
+          >
+            your Cloudinary dashboard
+          </a>{" "}
+          directly and deleting them from the &quot;seller-backbone&quot;
+          folder.
+        </p>
       </div>
     </div>
   );

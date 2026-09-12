@@ -297,6 +297,40 @@ using Firebase Storage.
 **What you should see:** See the message given alongside this update for
 the exact order to test both fixes.
 
+### 2026-09-12 — Switched image hosting from Firebase Storage to Cloudinary
+**What was built:** Firebase Storage turned out to need a paid plan, so
+image uploads now go through Cloudinary's free plan instead. Firestore
+(the database) and Authentication (admin login) are completely unaffected
+— confirmed by directly re-testing a real, unauthenticated read against
+Firestore's API after the change, which still succeeded.
+**Files created/changed:**
+- `.env.local` — added the Cloudinary cloud name and upload preset.
+- `lib/storage.js` — rewritten to upload to Cloudinary instead of Firebase.
+  Every image goes into a "seller-backbone" folder (never the root), and
+  the link returned is automatically compressed and served in a modern
+  format. If the upload preset is missing or not set to unsigned, that's
+  explained in plain English instead of showing Cloudinary's raw error.
+- `lib/firebase.js` — the Firebase Storage connection removed; Firestore
+  and Authentication setup untouched.
+- `components/admin/ImageUploader.js`, `ImageListUploader.js` — the
+  "Remove" button now only removes the link (Cloudinary's free plan can't
+  delete files from the browser side); everything else — click/drag to
+  upload, preview, progress, validation, paste-a-URL, drag-to-reorder —
+  behaves exactly as before.
+- `lib/firestore.js` — deleting a project or review no longer tries to
+  delete its images from storage (that call doesn't exist for Cloudinary);
+  it only removes the project/review record itself.
+- `app/admin/(panel)/page.js` — added a note on the Dashboard explaining
+  that unused images aren't deleted automatically, with a link to clear
+  them manually from the Cloudinary website if storage ever fills up.
+- `docs/DECISIONS.md` — updated to reflect Cloudinary (not Firebase
+  Storage) as the image host, and that deleted images stay on Cloudinary.
+**Files deleted:**
+- `storage.rules` — no longer needed; Cloudinary's upload preset (not a
+  rules file) controls who can upload.
+**What you should see:** See the message given alongside this update for
+exactly how to test an upload and confirm it landed in Cloudinary.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
