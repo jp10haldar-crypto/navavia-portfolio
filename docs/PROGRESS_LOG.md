@@ -32,6 +32,20 @@ locked-in decisions for the whole project going forward.
 **What you should see:** Three new files inside a `docs` folder in the
 project.
 
+### 2026-09-12 — Version control + GitHub backup set up
+**What was built:** Git tracking for the project (it was already initialised
+by the project setup tool), a `.gitignore` confirmed to exclude
+`node_modules`, `.next`, and `.env.local` (so Firebase keys never get
+uploaded), a plain-English `README.md` at the project root, and the first
+real commit of all the work so far.
+**Files created/changed:**
+- `.gitignore` — checked, already excludes the right things
+- `README.md` — explains what the project is and how to run it
+**What you should see:** Running `git log` in the project folder shows a
+commit titled "Initial setup: Next.js portfolio project with docs and
+tracking". The code is not yet on GitHub — that's a manual step (see the
+instructions given alongside this update).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
