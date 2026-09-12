@@ -65,15 +65,45 @@ links), a large headline in the middle with two buttons, and a footer at the
 bottom. On a narrow/mobile-width screen, the nav links collapse into a
 hamburger menu.
 
+### 2026-09-12 — Step 3: Projects grid page
+**What was built:** The full "Our Work" page listing every project as a
+card, with filter buttons, plus a reusable project card used both there and
+in a new "Featured Work" section on the homepage. The build plan was also
+revised to 11 steps (reviews, blog, social links added), and two new
+decisions were logged (YouTube for walkthrough videos; no city/region names
+in site copy since clients are worldwide).
+**Files created/changed:**
+- `data/projects.js` — rewritten. 3 dummy projects (travel booking website,
+  e-commerce store, mobile app) with full detail fields (tech used, live
+  link, screenshot paths, featured flag, etc.)
+- `components/ProjectCard.js` — new. One reusable card: screenshot (or
+  placeholder box if the image is missing), category, title, description,
+  tech tags, "View Details" link. Lifts and highlights on hover.
+- `app/projects/page.js` — new. The "Our Work" page at /projects with
+  All/Websites/Mobile Apps filter buttons and a responsive grid.
+- `components/FeaturedWork.js` — new. Homepage section showing only
+  projects marked featured, with a "See All Projects" link.
+- `app/page.js` — changed. Now shows Hero followed by Featured Work.
+- `docs/PROJECT_PLAN.md` — revised to the new 11-step build order.
+- `docs/DECISIONS.md` — added YouTube-hosting and worldwide-clients decisions.
+**What you should see in the browser:** http://localhost:3000 now has a
+"Featured Work" section below the headline showing 2 project cards and a
+"See All Projects" link. Opening http://localhost:3000/projects shows all 3
+projects in a grid with working filter buttons. Since no real screenshots
+exist yet, every card shows a dark box with the project's name instead of
+an image — that's expected.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
 
 ## NOT STARTED
 
-- Step 3: Projects grid page with dummy data
-- Step 4: Project detail page with customer section and admin-panel screenshot section
-- Step 5: Firebase connection + admin login
-- Step 6: Admin panel to add/edit/delete projects and upload screenshots
-- Step 7: Contact and enquiry form
-- Step 8: Deploy to Vercel
+- Step 4: Project detail page — customer section, admin-panel screenshots, embedded video walkthrough
+- Step 5: Client reviews section
+- Step 6: Firebase connection + admin login
+- Step 7: Admin panel — manage projects, reviews and blog posts
+- Step 8: Blog section for SEO
+- Step 9: Contact and enquiry form
+- Step 10: Social media links and embeds
+- Step 11: Deploy to Vercel

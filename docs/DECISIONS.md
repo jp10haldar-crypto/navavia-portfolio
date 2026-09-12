@@ -13,3 +13,5 @@ built this way."
 - **Brand name:** "Seller Backbone" — used across the homepage, header, and browser tab title.
 - **Each project page shows:** a live link to the project, customer-facing screenshots, and admin-panel screenshots — all three, clearly separated.
 - **Code style:** one function/component per file, with a plain-English comment at the top of every file explaining what it does and when it runs.
+- **2026-09-12 — Project walkthrough videos:** hosted on YouTube as unlisted videos and embedded on the project detail pages, not uploaded directly to the site.
+- **2026-09-12 — Geographic scope:** the business serves clients worldwide, not only locally. No city or region name should appear in site copy, headlines, or taglines.
