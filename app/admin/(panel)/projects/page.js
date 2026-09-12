@@ -1,8 +1,10 @@
 // WHAT THIS FILE DOES: The admin's project list, visible at /admin/projects.
-// Shows every project in a table with Edit/Delete buttons, and an
-// "Add New Project" button at the top. Deleting always asks for
-// confirmation first, so nothing gets removed by an accidental click.
-// Runs in the browser so it can load the live list and react to clicks.
+// Shows every project in a table with Edit/Preview/Delete buttons, and an
+// "Add New Project" button at the top. Preview opens that project's public
+// page in a new tab (so you never lose your place in the admin panel).
+// Deleting always asks for confirmation first, so nothing gets removed by
+// an accidental click. Runs in the browser so it can load the live list
+// and react to clicks.
 
 "use client";
 
@@ -95,6 +97,17 @@ export default function AdminProjectsPage() {
                       >
                         Edit
                       </Link>
+                      {/* Opens in a new tab on purpose, so previewing the
+                          public page never loses your place in the admin
+                          panel. */}
+                      <a
+                        href={`/projects/${project.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted hover:text-foreground"
+                      >
+                        Preview ↗
+                      </a>
                       <button
                         type="button"
                         onClick={() => handleDelete(project)}

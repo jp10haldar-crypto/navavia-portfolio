@@ -1,12 +1,12 @@
-// WHAT THIS FILE DOES: This wraps every single page on the site (it's the
-// shared "frame" — header, footer, and fonts that apply everywhere). It runs
-// for every page load. The Header goes above {children} (the current page's
-// own content) and the Footer goes below it, so every page automatically
-// gets both without needing to add them individually.
+// WHAT THIS FILE DOES: The outermost wrapper around truly every page on the
+// site, public and admin alike — it only sets up the fonts and the base
+// page styling. It does NOT add the public Header/Footer anymore (those
+// live in app/(site)/layout.js, applying to public pages only) and it does
+// NOT add the admin sidebar (that lives in app/admin/(panel)/layout.js).
+// This separation is what keeps the public site and the admin panel from
+// ever bleeding into each other.
 
 import { Geist, Geist_Mono } from "next/font/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,11 +30,7 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
 }

@@ -5,7 +5,7 @@
 // data is loading it shows a simple loading message, and if the database
 // can't be reached it shows a clean message instead of crashing or leaving
 // a blank page. The Header and Footer wrap around it automatically via
-// app/layout.js, so they don't need to be added here.
+// app/(site)/layout.js, so they don't need to be added here.
 
 "use client";
 

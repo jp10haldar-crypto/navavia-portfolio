@@ -1,9 +1,10 @@
 // WHAT THIS FILE DOES: The form used for both "Add New Project" and
 // "Edit Project" — one form, reused for both, since the fields are
 // identical. It checks required fields before saving, turns any full
-// YouTube link pasted in into just the video id automatically, and saves
+// YouTube link pasted in into just the video id automatically, lets you
+// upload real screenshot images (or paste a URL instead), and saves
 // straight to the real database through lib/firestore.js. Runs in the
-// browser because it reacts to typing and the Save click.
+// browser because it reacts to typing, uploads, and the Save click.
 
 "use client";
 
@@ -11,6 +12,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { addProject, updateProject } from "@/lib/firestore";
 import { extractYouTubeId } from "@/lib/utils";
+import ImageListUploader from "@/components/admin/ImageListUploader";
 
 const CATEGORY_OPTIONS = ["Website", "Mobile App"];
 const INPUT_CLASSES =
@@ -29,8 +31,8 @@ export default function ProjectForm({ projectId, initialProject }) {
     liveUrl: initialProject?.liveUrl ?? "",
     youtubeInput: initialProject?.youtubeId ?? "",
     featured: initialProject?.featured ?? false,
-    customerScreenshots: initialProject?.customerScreenshots?.join("\n") ?? "",
-    adminScreenshots: initialProject?.adminScreenshots?.join("\n") ?? "",
+    customerScreenshots: initialProject?.customerScreenshots ?? [],
+    adminScreenshots: initialProject?.adminScreenshots ?? [],
   });
   const [missingFields, setMissingFields] = useState([]);
   const [saveError, setSaveError] = useState("");
@@ -76,8 +78,8 @@ export default function ProjectForm({ projectId, initialProject }) {
       liveUrl: values.liveUrl.trim(),
       youtubeId: extractYouTubeId(values.youtubeInput),
       featured: values.featured,
-      customerScreenshots: splitList(values.customerScreenshots),
-      adminScreenshots: splitList(values.adminScreenshots),
+      customerScreenshots: values.customerScreenshots,
+      adminScreenshots: values.adminScreenshots,
     };
 
     const result = isEditing
@@ -167,21 +169,23 @@ export default function ProjectForm({ projectId, initialProject }) {
         />
       </Field>
 
-      <Field label="Customer Screenshots" hint="One image path or URL per line.">
-        <textarea
+      <Field
+        label="Customer Screenshots"
+        hint="Upload one or more images, or paste a URL. Drag a thumbnail to reorder."
+      >
+        <ImageListUploader
           value={values.customerScreenshots}
-          onChange={(event) => updateField("customerScreenshots", event.target.value)}
-          rows={3}
-          className={INPUT_CLASSES}
+          onChange={(urls) => updateField("customerScreenshots", urls)}
         />
       </Field>
 
-      <Field label="Admin Panel Screenshots" hint="One image path or URL per line.">
-        <textarea
+      <Field
+        label="Admin Panel Screenshots"
+        hint="Upload one or more images, or paste a URL. Drag a thumbnail to reorder."
+      >
+        <ImageListUploader
           value={values.adminScreenshots}
-          onChange={(event) => updateField("adminScreenshots", event.target.value)}
-          rows={3}
-          className={INPUT_CLASSES}
+          onChange={(urls) => updateField("adminScreenshots", urls)}
         />
       </Field>
 

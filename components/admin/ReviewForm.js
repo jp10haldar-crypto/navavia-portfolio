@@ -1,15 +1,17 @@
 // WHAT THIS FILE DOES: The form used for both "Add New Review" and
 // "Edit Review" — one form, reused for both. It loads the list of existing
-// projects so you can pick which one (if any) the review is about, checks
-// required fields before saving, and saves straight to the real database
-// through lib/firestore.js. Runs in the browser because it reacts to
-// typing and the Save click.
+// projects so you can pick which one (if any) the review is about, lets
+// you upload the client's photo (or paste a URL instead), checks required
+// fields before saving, and saves straight to the real database through
+// lib/firestore.js. Runs in the browser because it reacts to typing,
+// uploads, and the Save click.
 
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { addReview, updateReview, getAllProjects } from "@/lib/firestore";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 const RATING_OPTIONS = [1, 2, 3, 4, 5];
 const INPUT_CLASSES =
@@ -144,13 +146,11 @@ export default function ReviewForm({ reviewId, initialReview }) {
 
       <Field
         label="Client Photo"
-        hint="An image path or URL. Leave blank to show the client's initials instead."
+        hint="Upload a photo, or paste a URL. Leave empty to show the client's initials instead."
       >
-        <input
-          type="text"
+        <ImageUploader
           value={values.clientPhoto}
-          onChange={(event) => updateField("clientPhoto", event.target.value)}
-          className={INPUT_CLASSES}
+          onChange={(url) => updateField("clientPhoto", url)}
         />
       </Field>
 

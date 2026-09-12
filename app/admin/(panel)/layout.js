@@ -1,9 +1,11 @@
 // WHAT THIS FILE DOES: The shared frame around every admin page EXCEPT the
-// login page — a sidebar with Dashboard/Projects/Reviews links and a Sign
-// Out button. Before showing any of that, it double-checks with Firebase
-// that someone is actually signed in; if not, it redirects to the login
-// page instead of showing anything private. It runs in the browser because
-// it watches live sign-in state and reacts to the mobile menu toggle.
+// login page — a sidebar with Dashboard/Projects/Reviews links, a
+// "View Public Site" link (opens in a new tab, so it never risks losing
+// your admin session), and a Sign Out button. Before showing any of that,
+// it double-checks with Firebase that someone is actually signed in; if
+// not, it redirects to the login page instead of showing anything private.
+// It runs in the browser because it watches live sign-in state and reacts
+// to the mobile menu toggle.
 
 "use client";
 
@@ -94,10 +96,21 @@ export default function AdminPanelLayout({ children }) {
           ))}
         </nav>
 
+        {/* Opens in a new tab on purpose — browsing the public site should
+            never risk losing your admin session in this tab. */}
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 rounded-full border border-white/10 px-4 py-2 text-center text-sm font-medium text-muted transition-colors hover:text-foreground"
+        >
+          View Public Site ↗
+        </a>
+
         <button
           type="button"
           onClick={handleSignOut}
-          className="mt-8 rounded-full border border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-background"
+          className="mt-3 rounded-full border border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-background"
         >
           Sign Out
         </button>

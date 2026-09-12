@@ -1,0 +1,30 @@
+// WHAT THIS FILE DOES: The security guard for uploaded image files. Like
+// firestore.rules, this doesn't run inside this Next.js app — it runs on
+// Firebase's own servers, and only takes effect once it's pasted into the
+// Firebase Console and published (see the instructions given alongside
+// this file). Every time anyone tries to view, upload, or delete an image,
+// Firebase checks these rules first.
+//
+// The rules below say:
+// - Anyone (including visitors who aren't signed in) can VIEW images, so
+//   screenshots show up on the public site.
+// - Only someone signed in (the admin) can upload a new image, and it must
+//   actually be an image file under 5MB — checked here too, not just in
+//   the app, so the limit can't be bypassed.
+// - Only someone signed in (the admin) can delete an image.
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;
+
+      allow create, update: if request.auth != null
+                             && request.resource.size < 5 * 1024 * 1024
+                             && request.resource.contentType.matches('image/.*');
+
+      allow delete: if request.auth != null;
+    }
+  }
+}

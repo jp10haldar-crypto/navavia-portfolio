@@ -1,10 +1,28 @@
-// WHAT THIS FILE DOES: The footer shown at the bottom of every page. It's
-// added once in app/layout.js, so it automatically appears everywhere.
-// Unlike the header, nothing here needs to react to clicks, so it renders
-// once on the server and is sent to the browser as plain HTML.
+// WHAT THIS FILE DOES: The footer shown at the bottom of every public
+// page. It's added once in app/(site)/layout.js, so it automatically
+// appears on the homepage, /projects, and /reviews — but never inside the
+// admin area. It runs in the browser because it checks whether you're
+// currently signed in as admin, and only then shows a small "Admin Panel"
+// link — so there's a quiet way back in without typing the URL, but only
+// for someone who's actually signed in.
+
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsSignedIn(Boolean(user));
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <footer className="mt-auto border-t border-white/10 bg-card">
@@ -26,6 +44,14 @@ export default function Footer() {
           <a href="#" className="text-muted transition-colors hover:text-accent">
             Email
           </a>
+          {isSignedIn && (
+            <Link
+              href="/admin"
+              className="text-muted transition-colors hover:text-accent"
+            >
+              Admin Panel
+            </Link>
+          )}
         </div>
       </div>
 

@@ -233,6 +233,70 @@ the rules were published, proving the security rules are actually live
 **What you should see in the browser:** See the message given alongside
 this update for the exact order to test everything.
 
+### 2026-09-12 — Admin panel fixes: separation from public site + real image uploads
+**What was built:** Two problems reported in the admin panel were fixed.
+
+**Problem 1 — admin and public site were mixed up.** The actual cause: the
+root layout was wrapping every page, including every admin page, in the
+public Header and Footer — so the admin sidebar had the public nav bar
+sitting right on top of it, and clicking the wrong "Projects" link (the
+public one, not the admin one) would leave the admin area with no way
+back. Every link inside the admin area itself was checked and was already
+pointing to the correct `/admin/...` page — the shared layout was the only
+real bug.
+**Files created:**
+- `app/(site)/layout.js` — new. The Header/Footer wrapper, now scoped to
+  public pages only.
+**Files moved:** `app/page.js`, `app/projects/`, `app/reviews/` all moved
+into `app/(site)/` (a "route group" — it organizes files without changing
+their URLs, so `/`, `/projects`, and `/reviews` all work exactly as before).
+**Files changed:**
+- `app/layout.js` — the Header/Footer removed; it now only sets up fonts
+  and base styling for every page, admin and public alike.
+- `app/admin/(panel)/layout.js` — added a "View Public Site" link at the
+  bottom of the sidebar (opens in a new tab, so your admin session is
+  never at risk).
+- `app/admin/(panel)/projects/page.js` — added a "Preview" link per project
+  row (also opens in a new tab).
+- `components/Footer.js` — now checks live sign-in status and shows a
+  small "Admin Panel" link only when you're actually signed in.
+- `lib/firebase.js` — made "stay signed in between visits" an explicit,
+  documented setting (it was already Firebase's default behavior, but
+  wasn't written down anywhere before).
+**Confirmed:** every link inside the admin area was checked; the only two
+links leading outside `/admin/*` (View Public Site, Preview) both open in
+a new tab on purpose — there's no remaining way to accidentally leave the
+admin panel in the same tab.
+
+**Problem 2 — no way to upload screenshots.** Real image uploads now work,
+using Firebase Storage.
+**Files created:**
+- `storage.rules` — the security rules for uploaded files: anyone can view
+  an image, only a signed-in admin can upload or delete one, and the 5MB /
+  image-only limits are enforced on Firebase's side too, not just in the
+  app. Needs to be published in the Firebase Console (see the message
+  alongside this update) before uploads will work.
+- `lib/storage.js` — the 3 functions for handling files: upload an image
+  (with live progress and clear rejection messages), delete an image, get
+  an image's link.
+- `components/admin/ImageUploader.js` — new. One reusable uploader: click
+  or drag to upload, shows a preview and progress, has a remove button,
+  and an "...or paste a URL" fallback.
+- `components/admin/ImageListUploader.js` — new. Manages a whole list of
+  images (thumbnails, drag-to-reorder, remove-any-one), built on top of
+  ImageUploader — used for screenshot lists.
+**Files changed:**
+- `lib/firebase.js` — now also connects to Firebase Storage.
+- `components/admin/ProjectForm.js` — the Customer/Admin Screenshots fields
+  are now real upload-and-reorder image lists instead of plain text boxes.
+- `components/admin/ReviewForm.js` — the Client Photo field is now a real
+  single-image uploader instead of a plain text box.
+- `lib/firestore.js` — deleting a project now also deletes its screenshot
+  images from storage; deleting a review now also deletes its client photo.
+  A pasted external image URL is left alone, since it isn't ours to delete.
+**What you should see:** See the message given alongside this update for
+the exact order to test both fixes.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
