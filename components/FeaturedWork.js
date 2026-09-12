@@ -1,17 +1,14 @@
 // WHAT THIS FILE DOES: The "Featured Work" section shown on the homepage,
-// just below the main headline. It shows only the projects marked
-// featured: true in data/projects.js, plus a link to the full Projects
-// page. It renders once on the server — nothing here needs to react to
-// clicks itself (the cards inside handle their own image fallback).
+// just below the main headline. It just displays whichever projects are
+// handed to it — the homepage is the one that fetches from the real
+// database and decides which projects count as "featured" before passing
+// them in here. If there are none, this section hides itself completely.
 
 import Link from "next/link";
 import ProjectCard from "@/components/ProjectCard";
-import { projects } from "@/data/projects";
 
-export default function FeaturedWork() {
-  const featuredProjects = projects.filter((project) => project.featured);
-
-  if (featuredProjects.length === 0) {
+export default function FeaturedWork({ projects }) {
+  if (!projects || projects.length === 0) {
     return null;
   }
 
@@ -22,7 +19,7 @@ export default function FeaturedWork() {
       </h2>
 
       <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredProjects.map((project) => (
+        {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>

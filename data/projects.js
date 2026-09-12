@@ -1,8 +1,8 @@
-// WHAT THIS FILE DOES: Temporary, made-up project data so the site has
-// something real to display while we build it. Later, this will likely be
-// replaced by real data pulled from Firebase (see Step 6 in the build
-// plan). This file doesn't "run" by itself — pages/components import this
-// list and loop over it to show project cards.
+// WHAT THIS FILE DOES: The original made-up sample project data this site
+// launched with. The public pages no longer read this file directly — they
+// now load real data from Firestore (see lib/firestore.js). This file's
+// only remaining job is to be the source for the admin panel's one-time
+// "Import Starter Data" button, which copies it into the real database.
 //
 // Field notes:
 // - category is either "Website" or "Mobile App" (used by the filter buttons)

@@ -1,10 +1,11 @@
-// WHAT THIS FILE DOES: Temporary, made-up client review data so the
-// reviews section has something real to display while we build it. Per a
-// locked-in decision (see docs/DECISIONS.md), reviews are only ever added
-// by the admin — visitors can't submit their own on this site. Later, this
-// will likely be replaced by real reviews managed through the admin panel
-// (Step 7 in the build plan). This file doesn't "run" by itself —
-// pages/components import this list and loop over it.
+// WHAT THIS FILE DOES: The original made-up sample review data this site
+// launched with. The public pages no longer read this file directly — they
+// now load real data from Firestore (see lib/firestore.js). This file's
+// only remaining job is to be the source for the admin panel's one-time
+// "Import Starter Data" button, which copies it into the real database.
+// Per a locked-in decision (see docs/DECISIONS.md), reviews are only ever
+// added by the admin, through the admin panel — visitors can't submit
+// their own on this site.
 //
 // Field notes:
 // - rating is a whole number from 1 to 5

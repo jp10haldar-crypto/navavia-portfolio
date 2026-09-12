@@ -1,0 +1,109 @@
+// WHAT THIS FILE DOES: The shared frame around every admin page EXCEPT the
+// login page — a sidebar with Dashboard/Projects/Reviews links and a Sign
+// Out button. Before showing any of that, it double-checks with Firebase
+// that someone is actually signed in; if not, it redirects to the login
+// page instead of showing anything private. It runs in the browser because
+// it watches live sign-in state and reacts to the mobile menu toggle.
+
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+
+const NAV_LINKS = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/projects", label: "Projects" },
+  { href: "/admin/reviews", label: "Reviews" },
+];
+
+export default function AdminPanelLayout({ children }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState(undefined); // undefined = still checking
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        router.push("/admin/login");
+      }
+    });
+    return unsubscribe;
+  }, [router]);
+
+  async function handleSignOut() {
+    await signOut(auth);
+    router.push("/admin/login");
+  }
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted">
+        Checking your sign-in status...
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col md:flex-row">
+      {/* Mobile-only top bar with a hamburger toggle for the sidebar below */}
+      <div className="flex items-center justify-between border-b border-white/10 bg-card px-6 py-4 md:hidden">
+        <span className="font-bold text-foreground">Admin Panel</span>
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen((open) => !open)}
+          className="flex flex-col gap-1.5 p-2"
+          aria-label="Toggle admin menu"
+        >
+          <span className="block h-0.5 w-6 bg-foreground" />
+          <span className="block h-0.5 w-6 bg-foreground" />
+          <span className="block h-0.5 w-6 bg-foreground" />
+        </button>
+      </div>
+
+      {/* Sidebar — always visible on desktop; on mobile it's hidden until
+          the hamburger button above is tapped. */}
+      <aside
+        className={`w-full flex-col border-white/10 bg-card px-6 py-8 md:flex md:w-64 md:shrink-0 md:border-r ${
+          isMenuOpen ? "flex" : "hidden"
+        }`}
+      >
+        <p className="hidden font-bold text-foreground md:mb-8 md:block">
+          Admin Panel
+        </p>
+
+        <nav className="flex flex-1 flex-col gap-2">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className={
+                pathname === link.href
+                  ? "rounded-lg bg-background px-4 py-2 font-medium text-accent"
+                  : "rounded-lg px-4 py-2 text-foreground transition-colors hover:bg-background"
+              }
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="mt-8 rounded-full border border-accent px-4 py-2 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-background"
+        >
+          Sign Out
+        </button>
+      </aside>
+
+      <main className="flex-1 px-6 py-10 md:px-10">{children}</main>
+    </div>
+  );
+}

@@ -186,22 +186,56 @@ login page and a protected admin page with a working Sign Out button.
 this update for the exact step-by-step test, including the one-time
 Firebase Console step needed before logging in will work.
 
+### 2026-09-12 — Step 7: Admin panel for managing projects and reviews
+**What was built:** A full working admin panel — you can now add, edit,
+and delete both projects and reviews yourself, with changes showing up on
+the public site immediately, no code involved. Confirmed for real: a
+genuine unauthenticated read straight to Firestore's API succeeded after
+the rules were published, proving the security rules are actually live
+(not just written in a file).
+**Files created:**
+- `firestore.rules` — the security rules: anyone can read projects/reviews,
+  only a signed-in admin can change them. Published in the Firebase Console.
+- `lib/firestore.js` — the 10 data functions (get all/get one/add/update/
+  delete, for both projects and reviews), plus the one-time starter-data
+  importer that refuses to run twice.
+- `lib/utils.js` — added a function that pulls a video id out of any
+  YouTube link you paste in, so you never need to know what a "video id" is.
+- `app/admin/(panel)/layout.js` — the sidebar (Dashboard/Projects/Reviews +
+  Sign Out), shown on every admin page except the login page. Collapses
+  into a hamburger menu on mobile.
+- `app/admin/(panel)/page.js` — the Dashboard: live counts of projects and
+  reviews, and the "Import Starter Data" button.
+- `components/admin/ProjectForm.js` and `components/admin/ReviewForm.js` —
+  the shared add/edit forms, with required-field checks and a
+  "Saving..." state.
+- `app/admin/(panel)/projects/page.js`, `projects/new/page.js`,
+  `projects/[projectId]/edit/page.js` — the projects list (with
+  Edit/Delete, confirmed before deleting) and add/edit pages.
+- `app/admin/(panel)/reviews/page.js`, `reviews/new/page.js`,
+  `reviews/[reviewId]/edit/page.js` — the same, for reviews.
+**Files changed:**
+- `lib/firebase.js` — now also connects to Firestore (the database), not
+  just sign-in.
+- `app/page.js`, `app/projects/page.js`, `app/projects/[id]/page.js`,
+  `app/reviews/page.js` — all four now load from the real database instead
+  of the dummy files, each showing a loading message while fetching and a
+  clean error message (never a crash or blank page) if it can't reach
+  Firestore.
+- `components/FeaturedWork.js` — now receives its project list as a prop
+  instead of importing the dummy data itself.
+- `data/projects.js`, `data/reviews.js` — kept, but their only remaining
+  job is feeding the one-time "Import Starter Data" button; the public
+  pages no longer read them directly.
+- `docs/DECISIONS.md` — logged the security rules, and the decision to
+  fetch data in the browser (for clean loading/error states) rather than
+  on the server.
+**What you should see in the browser:** See the message given alongside
+this update for the exact order to test everything.
+
 ## IN PROGRESS
 
-### Step 7: Admin panel — manage projects and reviews
-**What's done so far:** The database security rules (Part A) — these
-decide who's allowed to read/write project and review data once the real
-database is connected. Waiting on you to publish them in the Firebase
-Console before the rest of Step 7 (the data layer and the admin panel
-itself) can be built and actually tested.
-**Files created:**
-- `firestore.rules` — new. Visitors can read projects/reviews; only a
-  signed-in admin can create, update, or delete them; everything else is
-  denied by default.
-**What's next:** Once you confirm the rules are published, the remaining
-parts of Step 7 — the data-saving functions, the one-time data import, the
-admin panel pages for projects/reviews, and switching the public site to
-read from the real database — will follow.
+_Nothing in progress right now._
 
 ## NOT STARTED
 

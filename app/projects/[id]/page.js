@@ -1,22 +1,86 @@
 // WHAT THIS FILE DOES: The detail page for one single project, visible at
 // URLs like /projects/1 and /projects/2. The "[id]" in the folder name
 // tells Next.js to make ONE page template that works for every project —
-// it reads which project to show from the number in the URL itself,
-// instead of needing a separate file per project. If that number doesn't
-// match any real project, it shows a clean "not found" message instead of
-// crashing.
+// it reads which project to show from the database using the id in the
+// URL. While that's loading it shows a simple loading message; if the id
+// doesn't match any real project it shows a clean "not found" message; if
+// the database can't be reached it shows a clean error message — never a
+// crash or a blank page.
 
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { projects } from "@/data/projects";
-import { reviews } from "@/data/reviews";
+import { getProjectById, getAllReviews } from "@/lib/firestore";
 import ScreenshotGallery from "@/components/ScreenshotGallery";
 import ReviewsSection from "@/components/ReviewsSection";
 
-export default async function ProjectDetailPage({ params }) {
-  const { id } = await params;
-  const project = projects.find((item) => String(item.id) === id);
+export default function ProjectDetailPage() {
+  const { id } = useParams();
+  const [status, setStatus] = useState("loading"); // loading | notfound | error | ready
+  const [project, setProject] = useState(null);
+  const [projectReviews, setProjectReviews] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  if (!project) {
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      const [projectResult, reviewsResult] = await Promise.all([
+        getProjectById(id),
+        getAllReviews(),
+      ]);
+
+      if (!isMounted) return;
+
+      if (!projectResult.success) {
+        setStatus("notfound");
+        return;
+      }
+
+      setProject(projectResult.data);
+      setProjectReviews(
+        reviewsResult.success
+          ? reviewsResult.data.filter(
+              (review) => String(review.projectId) === String(id)
+            )
+          : []
+      );
+      setStatus("ready");
+    }
+
+    load().catch(() => {
+      if (isMounted) {
+        setErrorMessage(
+          "Something went wrong loading this project. Please try again."
+        );
+        setStatus("error");
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (status === "loading") {
+    return (
+      <div className="mx-auto max-w-xl px-6 py-24 text-center text-muted">
+        Loading project...
+      </div>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <div className="mx-auto max-w-xl px-6 py-24 text-center text-muted">
+        {errorMessage}
+      </div>
+    );
+  }
+
+  if (status === "notfound") {
     return (
       <div className="mx-auto max-w-xl px-6 py-24 text-center">
         <h1 className="text-2xl font-bold text-foreground">
@@ -37,9 +101,6 @@ export default async function ProjectDetailPage({ params }) {
   }
 
   const hasAdminScreenshots = project.adminScreenshots?.length > 0;
-  const projectReviews = reviews.filter(
-    (review) => review.projectId === project.id
-  );
 
   return (
     <div>
