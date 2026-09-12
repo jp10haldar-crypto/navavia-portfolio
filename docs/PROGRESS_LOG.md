@@ -163,13 +163,35 @@ visitors cannot submit their own.
 **What you should see in the browser:** See the message given alongside
 this update for exactly what's on each page.
 
+### 2026-09-12 — Step 6: Firebase connection + admin login
+**What was built:** The app is now genuinely connected to the real Seller
+Backbone Firebase project (confirmed by testing the key against Firebase's
+own servers — not just checking the text existed), plus a working admin
+login page and a protected admin page with a working Sign Out button.
+**Files created:**
+- `.env.local` — holds the real Firebase keys. Never committed to git
+  (confirmed: it does not appear in `git status` at all, because
+  `.gitignore` already excludes it).
+- `lib/firebase.js` — new. Connects the app to Firebase using the keys in
+  `.env.local`.
+- `app/admin/login/page.js` — new. Email/password sign-in form; shows an
+  error message on a wrong password.
+- `app/admin/page.js` — new. Private page that redirects to the login page
+  if no one is signed in; shows a welcome message and a working Sign Out
+  button if someone is.
+- `docs/DECISIONS.md` — logged that admin login uses Firebase
+  Authentication (email/password), with the admin account created manually
+  in the Firebase Console rather than through the app.
+**What you should see in the browser:** See the message given alongside
+this update for the exact step-by-step test, including the one-time
+Firebase Console step needed before logging in will work.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
 
 ## NOT STARTED
 
-- Step 6: Firebase connection + admin login
 - Step 7: Admin panel — manage projects, reviews and blog posts
 - Step 8: Blog section for SEO
 - Step 9: Contact and enquiry form

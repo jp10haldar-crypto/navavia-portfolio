@@ -16,3 +16,4 @@ built this way."
 - **2026-09-12 — Project walkthrough videos:** hosted on YouTube as unlisted videos and embedded on the project detail pages, not uploaded directly to the site.
 - **2026-09-12 — Geographic scope:** the business serves clients worldwide, not only locally. No city or region name should appear in site copy, headlines, or taglines.
 - **2026-09-12 — Client reviews:** added by the admin only. Visitors cannot submit reviews on this site.
+- **2026-09-12 — Admin login method:** Firebase Authentication with email + password. The admin account itself is created manually in the Firebase Console (Authentication → Users), not through the app — this app only checks sign-in, it doesn't create new admin accounts.
