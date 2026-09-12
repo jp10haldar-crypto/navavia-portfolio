@@ -1,8 +1,12 @@
 // WHAT THIS FILE DOES: This wraps every single page on the site (it's the
-// shared "frame" — think header/footer/fonts that apply everywhere). It runs
-// for every page load, before the specific page's own content is inserted.
+// shared "frame" — header, footer, and fonts that apply everywhere). It runs
+// for every page load. The Header goes above {children} (the current page's
+// own content) and the Footer goes below it, so every page automatically
+// gets both without needing to add them individually.
 
 import { Geist, Geist_Mono } from "next/font/google";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,7 +30,11 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }
