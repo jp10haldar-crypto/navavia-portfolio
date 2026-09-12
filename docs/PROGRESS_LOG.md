@@ -134,13 +134,41 @@ real (placeholder) screenshots you can click to enlarge, and a video
 section that's never empty — project 1 plays a real test video, projects 2
 and 3 show a "Walkthrough video coming soon" box instead.
 
+### 2026-09-12 — Step 5: Client reviews section
+**What was built:** A client reviews section showing star ratings, quotes,
+and client photos (or initials if no photo exists), reused in three places:
+a "What Our Clients Say" section on the homepage (featured reviews only), a
+full "Client Reviews" page at /reviews (every review), and a "What This
+Client Said" section on each project detail page (only reviews tied to that
+specific project). "Reviews" was also added to the header navigation menu.
+It was logged as a decision that reviews are added by the admin only —
+visitors cannot submit their own.
+**Files created:**
+- `data/reviews.js` — new. 4 dummy reviews of varying length, one
+  deliberately missing a photo to test the initials fallback.
+- `public/images/placeholders/client-1.svg` to `client-4.svg` — new. Simple
+  circular avatar placeholders with each client's initials.
+- `components/ReviewCard.js` — new. One review card: star rating, quote,
+  photo/initials, name, role and company.
+- `components/ReviewsSection.js` — new. Reusable heading + subheading +
+  review grid, reused on all three pages above with different settings.
+- `app/reviews/page.js` — new. The full "Client Reviews" page.
+**Files changed:**
+- `app/page.js` — added the "What Our Clients Say" section and a
+  "Read All Reviews" link, below Featured Work.
+- `app/projects/[id]/page.js` — added the "What This Client Said" section
+  between the admin panel section and the bottom call-to-action.
+- `components/Header.js` — added a "Reviews" link between Projects and Services.
+- `docs/DECISIONS.md` — logged that reviews are admin-added only.
+**What you should see in the browser:** See the message given alongside
+this update for exactly what's on each page.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
 
 ## NOT STARTED
 
-- Step 5: Client reviews section
 - Step 6: Firebase connection + admin login
 - Step 7: Admin panel — manage projects, reviews and blog posts
 - Step 8: Blog section for SEO

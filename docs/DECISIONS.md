@@ -15,3 +15,4 @@ built this way."
 - **Code style:** one function/component per file, with a plain-English comment at the top of every file explaining what it does and when it runs.
 - **2026-09-12 — Project walkthrough videos:** hosted on YouTube as unlisted videos and embedded on the project detail pages, not uploaded directly to the site.
 - **2026-09-12 — Geographic scope:** the business serves clients worldwide, not only locally. No city or region name should appear in site copy, headlines, or taglines.
+- **2026-09-12 — Client reviews:** added by the admin only. Visitors cannot submit reviews on this site.

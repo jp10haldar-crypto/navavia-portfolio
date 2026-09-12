@@ -8,7 +8,9 @@
 
 import Link from "next/link";
 import { projects } from "@/data/projects";
+import { reviews } from "@/data/reviews";
 import ScreenshotGallery from "@/components/ScreenshotGallery";
+import ReviewsSection from "@/components/ReviewsSection";
 
 export default async function ProjectDetailPage({ params }) {
   const { id } = await params;
@@ -35,6 +37,9 @@ export default async function ProjectDetailPage({ params }) {
   }
 
   const hasAdminScreenshots = project.adminScreenshots?.length > 0;
+  const projectReviews = reviews.filter(
+    (review) => review.projectId === project.id
+  );
 
   return (
     <div>
@@ -155,6 +160,10 @@ export default async function ProjectDetailPage({ params }) {
           </div>
         </section>
       )}
+
+      {/* CLIENT REVIEW SECTION — only shows reviews tied to this exact
+          project; hides itself completely if there are none. */}
+      <ReviewsSection heading="What This Client Said" reviews={projectReviews} />
 
       {/* BOTTOM CALL TO ACTION */}
       <section className="mx-auto max-w-6xl px-6 py-16 text-center">
