@@ -331,6 +331,33 @@ Firestore's API after the change, which still succeeded.
 **What you should see:** See the message given alongside this update for
 exactly how to test an upload and confirm it landed in Cloudinary.
 
+### 2026-09-12 — Fixed: "Import Starter Data" was silently failing
+**What was wrong (confirmed by directly testing against Firestore, not
+just reading the code):** `firestore.rules` only had rules for the
+`projects` and `reviews` collections. The one-time import also needs to
+read/write a small `setup` collection (just a marker recording "has this
+already run?"), which had no rule of its own — so it fell under the
+catch-all "deny everything else" safety net, blocking it for everyone,
+including the signed-in admin. The import function's very first step
+(checking that marker) failed immediately as a result, before a single
+project or review was ever written — and the error was being swallowed
+into a generic "The import failed partway through" message instead of
+naming the real, permissions-related cause. `data/projects.js` and
+`data/reviews.js` were never the problem — both were fully intact the
+whole time, with exactly 3 projects and 4 reviews (3 linked to a project,
+1 not), the placeholder screenshot paths, and the YouTube video on the
+first project.
+**Files changed:**
+- `firestore.rules` — added a rule allowing the signed-in admin to
+  read/write the `setup` collection. **Needs to be re-published in the
+  Firebase Console** (same process as before) before this fix takes effect.
+- `lib/firestore.js` — `seedInitialData` rewritten to check each stage
+  separately, so any failure reports its real, specific cause — and calls
+  out a Firestore permissions error by name — instead of one generic
+  message hiding what actually happened.
+**What you should see:** See the message given alongside this update for
+the exact steps to re-publish the rules and verify the import for real.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

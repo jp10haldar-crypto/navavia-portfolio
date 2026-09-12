@@ -10,6 +10,9 @@
 //   reviews, so the public site can display them.
 // - Only someone signed in (the admin) can CREATE, UPDATE, or DELETE
 //   projects or reviews.
+// - The admin panel also keeps a small private "setup" collection (just a
+//   bookkeeping marker recording whether the one-time starter-data import
+//   has already run) — only the signed-in admin can read or write that.
 // - Anything not explicitly allowed above is denied — the last rule below
 //   blocks every other collection/action by default, as a safety net.
 
@@ -26,6 +29,10 @@ service cloud.firestore {
     match /reviews/{reviewId} {
       allow read: if true;
       allow write: if request.auth != null;
+    }
+
+    match /setup/{docId} {
+      allow read, write: if request.auth != null;
     }
 
     // Safety net: anything not explicitly allowed above is denied.
