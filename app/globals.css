@@ -1,3 +1,7 @@
+/* WHAT THIS FILE DOES: Site-wide styling defaults (colors, fonts) that
+   apply everywhere unless a specific page/component overrides them.
+   It's loaded once, automatically, via app/layout.js. */
+
 @import "tailwindcss";
 
 :root {

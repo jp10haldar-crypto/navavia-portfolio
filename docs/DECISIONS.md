@@ -1,0 +1,15 @@
+# Decisions
+
+This is the record of choices that are already locked in for this project.
+If a decision changes later, it gets added here (with the date) instead of
+just being changed silently — so there's always a paper trail of "why is it
+built this way."
+
+- **Framework:** Next.js, using the App Router.
+- **Language:** JavaScript — not TypeScript (kept simple, no type-checking layer).
+- **Styling:** Tailwind CSS.
+- **Database + admin login:** Firebase (to be connected in Step 5).
+- **Hosting:** Vercel (to be set up in Step 8).
+- **Brand name:** "Seller Backbone" — used across the homepage, header, and browser tab title.
+- **Each project page shows:** a live link to the project, customer-facing screenshots, and admin-panel screenshots — all three, clearly separated.
+- **Code style:** one function/component per file, with a plain-English comment at the top of every file explaining what it does and when it runs.
