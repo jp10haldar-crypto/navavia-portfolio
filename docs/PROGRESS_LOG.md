@@ -109,6 +109,31 @@ message instead of crashing.
 **What you should see in the browser:** Clicking any project card now opens
 a real detail page — see the message below for exactly what's on it.
 
+### 2026-09-12 — Step 4 addition: sample placeholder content
+**What was built:** Real, working sample images and a test video so the
+screenshot popup and video embed can actually be seen and clicked, instead
+of just showing "coming soon" text. The video section was also changed to
+always appear (a "coming soon" box with a play icon now shows instead of
+hiding the section completely when a project has no video yet).
+**Files created/changed:**
+- `public/images/placeholders/customer-1.svg`, `customer-2.svg`, `customer-3.svg`
+  — new. Rough website mockups (header, hero, 3 content boxes) labeled
+  "Customer View - Sample".
+- `public/images/placeholders/admin-1.svg`, `admin-2.svg`, `admin-3.svg`
+  — new. Rough dashboard mockups (sidebar, top bar, table rows) labeled
+  "Admin Panel - Sample".
+- `data/projects.js` — changed. All 3 dummy projects now use the 6
+  placeholder images above. Project 1 (Travel Agency) also got a real,
+  safe YouTube video id for testing, with a comment marking exactly which
+  line to replace later.
+- `app/projects/[id]/page.js` — changed. The "See It In Action" section now
+  always shows; a placeholder box with a play icon appears when a project
+  has no video yet, instead of hiding the whole section.
+**What you should see in the browser:** Every project detail page now shows
+real (placeholder) screenshots you can click to enlarge, and a video
+section that's never empty — project 1 plays a real test video, projects 2
+and 3 show a "Walkthrough video coming soon" box instead.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

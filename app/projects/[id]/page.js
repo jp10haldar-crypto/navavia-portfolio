@@ -80,15 +80,17 @@ export default async function ProjectDetailPage({ params }) {
         </div>
       </section>
 
-      {/* VIDEO WALKTHROUGH SECTION — hidden completely if there's no video yet */}
-      {project.youtubeId && (
-        <section className="mx-auto max-w-6xl px-6 py-16">
-          <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-            See It In Action
-          </h2>
-          {/* This wrapper keeps the video at a 16:9 shape at any screen
-              width, so it resizes cleanly on mobile instead of overflowing. */}
-          <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-lg bg-card">
+      {/* VIDEO WALKTHROUGH SECTION — always shown. If there's no video yet,
+          a placeholder box fills the same space instead of leaving an
+          empty-looking gap. */}
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
+          See It In Action
+        </h2>
+        {/* This wrapper keeps the video at a 16:9 shape at any screen width,
+            so it resizes cleanly on mobile instead of overflowing. */}
+        <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-lg bg-card">
+          {project.youtubeId ? (
             <iframe
               src={`https://www.youtube.com/embed/${project.youtubeId}`}
               title={`${project.title} walkthrough video`}
@@ -96,9 +98,24 @@ export default async function ProjectDetailPage({ params }) {
               allowFullScreen
               className="absolute inset-0 h-full w-full"
             />
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-6 w-6 fill-background"
+                  aria-hidden="true"
+                >
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+              <p className="text-sm text-muted">
+                Walkthrough video coming soon
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* CUSTOMER VIEW SECTION */}
       <section className="mx-auto max-w-6xl px-6 py-16">

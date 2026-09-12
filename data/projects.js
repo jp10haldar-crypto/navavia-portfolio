@@ -7,12 +7,28 @@
 // Field notes:
 // - category is either "Website" or "Mobile App" (used by the filter buttons)
 // - techUsed is a list of the tools/technologies used on that project
-// - youtubeId is left empty ("") until a real walkthrough video exists
-// - customerScreenshots/adminScreenshots are lists of image paths — the
-//   files don't exist yet, so cards will show a placeholder box instead of
-//   a broken image until real screenshots are added to public/images
+// - youtubeId is the part of a YouTube URL after "watch?v=". Leave it as ""
+//   to show the "coming soon" placeholder instead of a real video.
+// - customerScreenshots/adminScreenshots are lists of image paths. They
+//   currently all point at the sample placeholder images generated in
+//   public/images/placeholders/ so the screenshot grids and the
+//   click-to-enlarge popup have something real to show. Replace these
+//   paths with real screenshots (e.g. "/images/my-project-shot-1.png")
+//   once they exist.
 // - featured controls whether a project shows in the homepage's
 //   "Featured Work" section
+
+const SAMPLE_CUSTOMER_SCREENSHOTS = [
+  "/images/placeholders/customer-1.svg",
+  "/images/placeholders/customer-2.svg",
+  "/images/placeholders/customer-3.svg",
+];
+
+const SAMPLE_ADMIN_SCREENSHOTS = [
+  "/images/placeholders/admin-1.svg",
+  "/images/placeholders/admin-2.svg",
+  "/images/placeholders/admin-3.svg",
+];
 
 export const projects = [
   {
@@ -25,9 +41,13 @@ export const projects = [
       "A full booking website built for a travel agency. Customers can browse available trips, check live availability, and book directly online, while the agency manages listings and bookings from a private admin area.",
     techUsed: ["Next.js", "Tailwind CSS", "Firebase"],
     liveUrl: "https://example.com",
-    youtubeId: "",
-    customerScreenshots: ["/images/travel-agency-customer-1.png"],
-    adminScreenshots: ["/images/travel-agency-admin-1.png"],
+    // TEST VIDEO — this is a real, safe, public YouTube video used only to
+    // confirm the video embed works. Replace the line below with your own
+    // video's id (the part of its YouTube URL after "watch?v=") once you
+    // have a real walkthrough recorded.
+    youtubeId: "jNQXAC9IVRw",
+    customerScreenshots: SAMPLE_CUSTOMER_SCREENSHOTS,
+    adminScreenshots: SAMPLE_ADMIN_SCREENSHOTS,
     featured: true,
   },
   {
@@ -41,8 +61,8 @@ export const projects = [
     techUsed: ["Next.js", "Tailwind CSS", "Stripe"],
     liveUrl: "https://example.com",
     youtubeId: "",
-    customerScreenshots: ["/images/ecommerce-store-customer-1.png"],
-    adminScreenshots: ["/images/ecommerce-store-admin-1.png"],
+    customerScreenshots: SAMPLE_CUSTOMER_SCREENSHOTS,
+    adminScreenshots: SAMPLE_ADMIN_SCREENSHOTS,
     featured: true,
   },
   {
@@ -56,8 +76,8 @@ export const projects = [
     techUsed: ["React Native", "Firebase"],
     liveUrl: "https://example.com",
     youtubeId: "",
-    customerScreenshots: ["/images/mobile-app-customer-1.png"],
-    adminScreenshots: ["/images/mobile-app-admin-1.png"],
+    customerScreenshots: SAMPLE_CUSTOMER_SCREENSHOTS,
+    adminScreenshots: SAMPLE_ADMIN_SCREENSHOTS,
     featured: false,
   },
 ];
