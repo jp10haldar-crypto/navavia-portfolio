@@ -93,13 +93,28 @@ projects in a grid with working filter buttons. Since no real screenshots
 exist yet, every card shows a dark box with the project's name instead of
 an image — that's expected.
 
+### 2026-09-12 — Step 4: Project detail page
+**What was built:** A single page template that works for every project
+(reading which one to show from the URL), with a top section, an
+embeddable YouTube video section, a "what customers see" screenshot
+section, a separately-shaded "admin panel" screenshot section, and a
+closing call-to-action. Screenshots can be clicked to enlarge in a popup
+(closable via the × button, clicking outside, or pressing Escape). Visiting
+a project number that doesn't exist shows a clean "Project not found"
+message instead of crashing.
+**Files created:**
+- `app/projects/[id]/page.js` — new. The project detail page template.
+- `components/ScreenshotGallery.js` — new. Reusable screenshot grid with
+  click-to-enlarge popup, used for both the customer and admin sections.
+**What you should see in the browser:** Clicking any project card now opens
+a real detail page — see the message below for exactly what's on it.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
 
 ## NOT STARTED
 
-- Step 4: Project detail page — customer section, admin-panel screenshots, embedded video walkthrough
 - Step 5: Client reviews section
 - Step 6: Firebase connection + admin login
 - Step 7: Admin panel — manage projects, reviews and blog posts
