@@ -1,11 +1,12 @@
 // WHAT THIS FILE DOES: The shared frame around every admin page EXCEPT the
-// login page — a sidebar with Dashboard/Projects/Reviews links, a
+// login page — a sidebar with Dashboard/Enquiries/Projects/Reviews links
+// (Enquiries shows a small badge counting how many are still "New"), a
 // "View Public Site" link (opens in a new tab, so it never risks losing
 // your admin session), and a Sign Out button. Before showing any of that,
 // it double-checks with Firebase that someone is actually signed in; if
 // not, it redirects to the login page instead of showing anything private.
-// It runs in the browser because it watches live sign-in state and reacts
-// to the mobile menu toggle.
+// It runs in the browser because it watches live sign-in state, loads the
+// new-enquiry count, and reacts to the mobile menu toggle.
 
 "use client";
 
@@ -14,9 +15,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { getAllEnquiries } from "@/lib/firestore";
 
 const NAV_LINKS = [
   { href: "/admin", label: "Dashboard" },
+  { href: "/admin/enquiries", label: "Enquiries" },
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/reviews", label: "Reviews" },
 ];
@@ -26,6 +29,7 @@ export default function AdminPanelLayout({ children }) {
   const pathname = usePathname();
   const [user, setUser] = useState(undefined); // undefined = still checking
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [newEnquiryCount, setNewEnquiryCount] = useState(0);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -37,6 +41,18 @@ export default function AdminPanelLayout({ children }) {
     });
     return unsubscribe;
   }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    getAllEnquiries().then((result) => {
+      if (result.success) {
+        setNewEnquiryCount(
+          result.data.filter((enquiry) => enquiry.status === "New").length
+        );
+      }
+    });
+  }, [user, pathname]);
 
   async function handleSignOut() {
     await signOut(auth);
@@ -87,11 +103,16 @@ export default function AdminPanelLayout({ children }) {
               onClick={() => setIsMenuOpen(false)}
               className={
                 pathname === link.href
-                  ? "rounded-lg bg-background px-4 py-2 font-medium text-accent"
-                  : "rounded-lg px-4 py-2 text-foreground transition-colors hover:bg-background"
+                  ? "flex items-center justify-between rounded-lg bg-background px-4 py-2 font-medium text-accent"
+                  : "flex items-center justify-between rounded-lg px-4 py-2 text-foreground transition-colors hover:bg-background"
               }
             >
               {link.label}
+              {link.href === "/admin/enquiries" && newEnquiryCount > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-bold text-background">
+                  {newEnquiryCount}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

@@ -1,27 +1,53 @@
 // WHAT THIS FILE DOES: The admin Dashboard, visible at /admin once signed
-// in. Shows how many projects and reviews currently exist in the database,
-// has the one-time button to import the starter sample data, and a
-// reminder about clearing unused images from Cloudinary manually. It runs
-// in the browser so it can fetch live counts and react to the button click.
+// in. Shows how many projects, reviews, and enquiries currently exist
+// (plus how many enquiries are still "New"), the 5 most recent enquiries,
+// the one-time button to import the starter sample data, and a reminder
+// about clearing unused images from Cloudinary manually. It runs in the
+// browser so it can fetch live counts and react to the button click.
 
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllProjects, getAllReviews, seedInitialData } from "@/lib/firestore";
+import Link from "next/link";
+import {
+  getAllProjects,
+  getAllReviews,
+  getAllEnquiries,
+  seedInitialData,
+} from "@/lib/firestore";
+
+function formatDate(timestamp) {
+  if (!timestamp?.toDate) return "—";
+  return timestamp.toDate().toLocaleDateString(undefined, {
+    dateStyle: "medium",
+  });
+}
 
 export default function AdminDashboardPage() {
   const [projectCount, setProjectCount] = useState(null);
   const [reviewCount, setReviewCount] = useState(null);
+  const [enquiryCount, setEnquiryCount] = useState(null);
+  const [newEnquiryCount, setNewEnquiryCount] = useState(null);
+  const [recentEnquiries, setRecentEnquiries] = useState([]);
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
 
   async function loadCounts() {
-    const [projectsResult, reviewsResult] = await Promise.all([
+    const [projectsResult, reviewsResult, enquiriesResult] = await Promise.all([
       getAllProjects(),
       getAllReviews(),
+      getAllEnquiries(),
     ]);
     setProjectCount(projectsResult.success ? projectsResult.data.length : null);
     setReviewCount(reviewsResult.success ? reviewsResult.data.length : null);
+
+    if (enquiriesResult.success) {
+      setEnquiryCount(enquiriesResult.data.length);
+      setNewEnquiryCount(
+        enquiriesResult.data.filter((enquiry) => enquiry.status === "New").length
+      );
+      setRecentEnquiries(enquiriesResult.data.slice(0, 5));
+    }
   }
 
   useEffect(() => {
@@ -43,7 +69,19 @@ export default function AdminDashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-white/10 bg-card p-6">
+          <p className="text-sm text-muted">Total Enquiries</p>
+          <p className="mt-2 text-3xl font-bold text-foreground">
+            {enquiryCount === null ? "—" : enquiryCount}
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-card p-6">
+          <p className="text-sm text-muted">New Enquiries</p>
+          <p className="mt-2 text-3xl font-bold text-accent">
+            {newEnquiryCount === null ? "—" : newEnquiryCount}
+          </p>
+        </div>
         <div className="rounded-xl border border-white/10 bg-card p-6">
           <p className="text-sm text-muted">Projects</p>
           <p className="mt-2 text-3xl font-bold text-foreground">
@@ -59,6 +97,41 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="mt-10 rounded-xl border border-white/10 bg-card p-6">
+        <div className="flex items-center justify-between">
+          <p className="font-semibold text-foreground">Recent Enquiries</p>
+          <Link
+            href="/admin/enquiries"
+            className="text-sm text-accent hover:opacity-80"
+          >
+            View All →
+          </Link>
+        </div>
+
+        {recentEnquiries.length === 0 ? (
+          <p className="mt-3 text-sm text-muted">No enquiries yet.</p>
+        ) : (
+          <div className="mt-4 flex flex-col divide-y divide-white/10">
+            {recentEnquiries.map((enquiry) => (
+              <div
+                key={enquiry.id}
+                className="flex items-center justify-between py-3 text-sm"
+              >
+                <div>
+                  <p className="font-medium text-foreground">
+                    {enquiry.fullName}
+                  </p>
+                  <p className="text-muted">
+                    {formatDate(enquiry.createdAt)} · {enquiry.needType}
+                  </p>
+                </div>
+                <span className="text-xs text-muted">{enquiry.status}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 rounded-xl border border-white/10 bg-card p-6">
         <p className="font-semibold text-foreground">
           One-time starter data import
         </p>

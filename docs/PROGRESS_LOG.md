@@ -358,20 +358,54 @@ first project.
 **What you should see:** See the message given alongside this update for
 the exact steps to re-publish the rules and verify the import for real.
 
+### 2026-09-13 — Contact form and enquiries dashboard (Step 9 in the build plan)
+**What was built:** A public contact form that saves straight to the real
+database (confirmed for real: a genuine unauthenticated write to the
+`enquiries` collection succeeded, and a genuine unauthenticated read was
+correctly blocked — not just checking the code), plus a full admin
+dashboard for managing every enquiry that comes in.
+**Files created:**
+- `data/countries.js` — the country list for the contact form's dropdown.
+- `app/(site)/contact/page.js` — the public contact form: name, email,
+  phone, country (defaults to India), what you need, budget range (shown
+  in ₹ and $), and a message. No page reload — a button click handler
+  saves straight to Firestore. Required fields are checked with a message
+  under each one that's wrong; on success the form is replaced with a
+  thank-you message; on failure everything typed stays exactly as it was.
+  Also shows contact details and a "we work with clients worldwide" line.
+- `app/admin/(panel)/enquiries/page.js` — the enquiries dashboard: every
+  enquiry as a card (not a traditional table, so it reads well on a
+  phone), newest first, with a colour-coded status badge, a status
+  dropdown that saves immediately with a small "Saved ✓" confirmation,
+  filter buttons (All/New/Contacted/In Discussion/Won/Lost), a search box
+  (name or email), a clickable email (opens your email app), and a
+  delete button with an "Are you sure?" confirmation. Clicking a card
+  expands it to show the full message, phone, and budget.
+**Files changed:**
+- `firestore.rules` — added the `enquiries` collection rule (see the
+  previous log entry) — now confirmed published and working for real.
+- `lib/firestore.js` — added `addEnquiry`, `getAllEnquiries`,
+  `updateEnquiryStatus`, `deleteEnquiry`.
+- `lib/utils.js` — added an email-format checker, and the spam-protection
+  functions: a browser that's already sent 3 enquiries in the last hour
+  is blocked from sending another, using that browser's own storage to
+  remember when it last sent one (see docs/DECISIONS.md for exactly how,
+  and its limits).
+- `app/admin/(panel)/layout.js` — added "Enquiries" near the top of the
+  sidebar, with a small badge showing how many are still "New".
+- `app/admin/(panel)/page.js` — added Total/New enquiry counts and a
+  "Recent Enquiries" list (5 most recent) with a link to the full dashboard.
+- `docs/DECISIONS.md` — logged the spam-protection approach and the
+  enquiry status workflow.
+**Note:** testing this for real created one genuine test enquiry named
+"Automated Rules Test (safe to delete)" — delete it from the Enquiries
+dashboard using the new Delete button (a good first real test of it).
+**What you should see:** See the message given alongside this update for
+the exact order to test everything.
+
 ## IN PROGRESS
 
-### Contact form and enquiries dashboard (Step 9 in the build plan)
-**What's done so far:** The database security rules — these decide who's
-allowed to send, read, update, or delete enquiries once the real contact
-form is connected. Waiting on you to republish them in the Firebase
-Console before the rest of this step (the public contact form and the
-admin enquiries dashboard) can be built and actually tested.
-**Files changed:**
-- `firestore.rules` — added a rule for a new `enquiries` collection:
-  anyone (including visitors who aren't signed in) can submit one, but
-  only the signed-in admin can read, change, or delete them.
-**What's next:** Once you confirm the rules are republished, the contact
-page itself and the admin enquiries dashboard will follow.
+_Nothing in progress right now._
 
 ## NOT STARTED
 
