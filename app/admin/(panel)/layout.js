@@ -23,6 +23,7 @@ const NAV_LINKS = [
   { href: "/admin/projects", label: "Projects" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/homepage-videos", label: "Homepage Videos" },
+  { href: "/admin/blog", label: "Blog" },
 ];
 
 export default function AdminPanelLayout({ children }) {

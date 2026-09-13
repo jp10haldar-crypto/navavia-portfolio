@@ -518,12 +518,80 @@ mentions of the old name outside the four protected identifiers above.
 **What you should see:** See the message given alongside this update for
 every place to check.
 
+### 2026-09-13 — Blog for SEO (Step 8 in the build plan)
+**What was built:** A full blog: a public listing page and individual post
+pages with real search-engine titles/descriptions/social-share previews
+per post, an automatically self-updating sitemap and a robots file
+blocking the admin area from search engines, and a complete admin
+management area including a point-and-click (no code/syntax) content
+editor. Confirmed for real: with the new security rule not yet published,
+the live `/blog` page correctly showed a permissions-error message rather
+than crashing or silently showing an empty list — proof the error handling
+actually works, not just that it compiles.
+**Files created — data layer:**
+- `lib/utils.js` — added `slugify()` (title → URL-friendly slug) and
+  `calculateReadingTime()` (content length → minutes, min. 1).
+- `lib/firestore.js` — added the 7 blog functions (get published/get all/
+  get by slug/get by id/add/update/delete).
+**Files created — public pages:**
+- `app/(site)/blog/page.js` — the "Insights" listing page. Loads on the
+  server (unlike the rest of the public site — see docs/DECISIONS.md for
+  why) so it's properly crawlable by search engines.
+- `components/BlogListClient.js` — the tag filter buttons + grid, as a
+  small client-side piece nested inside that server-loaded page.
+- `app/(site)/blog/[slug]/page.js` — the single post page. Sets each
+  post's own title/description/Open Graph/Twitter preview automatically
+  from its fields, includes Article structured data for Google, and shows
+  a clean "Post not found" for a missing or (to a signed-out visitor)
+  unpublished slug.
+- `components/BlogPostView.js` — the shared post layout (cover image,
+  title, meta, content, share buttons, related posts, closing CTA), reused
+  by both the real post page and the admin's preview page.
+- `components/BlogPostCard.js` — the grid card (cover image, title,
+  excerpt, date, reading time, tags).
+- `components/ShareButtons.js` — LinkedIn, Facebook, WhatsApp, and
+  Copy Link.
+- `app/sitemap.js`, `app/robots.js` — self-updating sitemap (every
+  published post is included automatically) and the robots file
+  (blocks /admin from search engines).
+**Files created — admin:**
+- `components/admin/RichTextEditor.js` — the point-and-click content
+  editor (Bold, Italic, headings, lists, quote, link), built on TipTap.
+- `components/admin/BlogPostForm.js` — the shared add/edit form: title
+  (auto-generates the slug), slug override with a duplicate-URL warning,
+  excerpt, the content editor, cover image upload, author, tags, SEO
+  title/description, and three separate actions — Publish, Save as Draft,
+  and Preview (which auto-saves your current changes as a draft first,
+  then opens the real post layout in a new tab). Warns before closing the
+  tab/browser with unsaved changes.
+- `app/admin/(panel)/blog/page.js`, `blog/new/page.js`,
+  `blog/[postId]/edit/page.js` — the post list (Edit/Preview/Delete with
+  confirmation) and add/edit pages.
+- `app/admin/blog-preview/[postId]/page.js` — the preview page; lives
+  outside both the public layout and the admin sidebar on purpose (see
+  docs/DECISIONS.md).
+**Files changed:**
+- `firestore.rules` — added the `blogPosts` rule: anyone can read a
+  published post, only the signed-in admin can read a draft or
+  create/update/delete any post. **Needs to be republished in the Firebase
+  Console** before any of this works.
+- `app/admin/(panel)/layout.js` — added "Blog" to the sidebar.
+- `components/Header.js` — added "Blog" to the public navigation.
+- `app/globals.css` — added `.blog-content` styling for headings,
+  paragraphs, lists, links, and quotes.
+- `package.json` — added `@tiptap/react`, `@tiptap/pm`,
+  `@tiptap/starter-kit`, `@tiptap/extension-link`.
+- `docs/DECISIONS.md` — logged why blog pages load server-side, how draft
+  privacy and admin preview work together, why the editor is rich text
+  (TipTap) rather than Markdown, and that reading time/slugs are automatic.
+**What you should see:** See the message given alongside this update for
+how to write and publish your first post.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
 
 ## NOT STARTED
 
-- Step 8: Blog section for SEO
 - Step 10: Social media links and embeds
 - Step 11: Deploy to Vercel

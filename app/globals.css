@@ -31,3 +31,54 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Styling for blog post content, which comes from the admin's rich text
+   editor as raw HTML (headings, paragraphs, lists, links, bold/italic
+   text) and is displayed using this class name. Also used live inside the
+   editor itself, so writing a post looks the same as reading it. */
+.blog-content {
+  color: var(--foreground);
+  line-height: 1.75;
+}
+.blog-content > * + * {
+  margin-top: 1.25em;
+}
+.blog-content h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-top: 1.75em;
+}
+.blog-content h3 {
+  font-size: 1.25em;
+  font-weight: 700;
+  margin-top: 1.5em;
+}
+.blog-content p {
+  color: var(--foreground);
+}
+.blog-content ul,
+.blog-content ol {
+  padding-left: 1.5em;
+}
+.blog-content ul {
+  list-style-type: disc;
+}
+.blog-content ol {
+  list-style-type: decimal;
+}
+.blog-content li + li {
+  margin-top: 0.4em;
+}
+.blog-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.blog-content blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 1em;
+  color: var(--muted);
+  font-style: italic;
+}
+.blog-content strong {
+  font-weight: 700;
+}
