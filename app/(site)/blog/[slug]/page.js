@@ -7,12 +7,18 @@
 // any published post, it shows a clean "Post not found" message. If
 // something else goes wrong (e.g. the database can't be reached), it says
 // so honestly instead — it never pretends a real error is a missing post.
+// If the admin turns the whole blog off in Settings, every post page also
+// behaves as if it doesn't exist — the normal "Page Not Found" screen.
 
 import Link from "next/link";
+// Renamed on import since this file already uses "notFound" as the name
+// of a field on the result from getPublishedBlogPostBySlug.
+import { notFound as showPageNotFound } from "next/navigation";
 import BlogPostView from "@/components/BlogPostView";
 import {
   getPublishedBlogPostBySlug,
   getPublishedBlogPosts,
+  getSiteSettings,
 } from "@/lib/firestore";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -59,6 +65,11 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function BlogPostPage({ params }) {
+  const settingsResult = await getSiteSettings();
+  if (!settingsResult.data.blogEnabled) {
+    showPageNotFound();
+  }
+
   const { slug } = await params;
   const result = await getPublishedBlogPostBySlug(slug);
 

@@ -7,28 +7,35 @@
 // never touches Authentication in any way (see lib/firebase.js), and if
 // the database can't be reached while Vercel is building the site, this
 // still produces a valid sitemap with the fixed pages (homepage, projects,
-// reviews, blog, contact) rather than failing the whole deployment.
+// reviews, blog, contact) rather than failing the whole deployment. If the
+// admin turns the whole Blog or Services page off in Settings, it's left
+// out of the sitemap too — it wouldn't make sense to advertise a page to
+// search engines that visitors are shown "Page Not Found" for.
 //
 // NEXT_PUBLIC_SITE_URL isn't set yet (the site isn't live on a real domain
 // until Step 11 — deploy). Once it is, set that environment variable to
 // the real address (e.g. https://navavia.com) so the links below point to
 // the live site instead of localhost.
 
-import { getPublishedBlogPosts, getAllProjects } from "@/lib/firestore";
+import {
+  getPublishedBlogPosts,
+  getAllProjects,
+  getSiteSettings,
+} from "@/lib/firestore";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-const STATIC_PAGES = [
-  "",
-  "/projects",
-  "/reviews",
-  "/blog",
-  "/services",
-  "/contact",
-];
+const ALWAYS_ON_PAGES = ["", "/projects", "/reviews", "/contact"];
 
 export default async function sitemap() {
-  const staticPages = STATIC_PAGES.map((path) => ({
+  const settingsResult = await getSiteSettings();
+  const { blogEnabled, servicesEnabled } = settingsResult.data;
+
+  const togglablePages = [
+    ...(blogEnabled ? ["/blog"] : []),
+    ...(servicesEnabled ? ["/services"] : []),
+  ];
+  const staticPages = [...ALWAYS_ON_PAGES, ...togglablePages].map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),
   }));
@@ -42,14 +49,16 @@ export default async function sitemap() {
   // unexpected here can never take down the whole sitemap (and with it,
   // the whole build).
   try {
-    const result = await getPublishedBlogPosts();
-    if (result.success) {
-      postPages = result.data.map((post) => ({
-        url: `${SITE_URL}/blog/${post.slug}`,
-        lastModified: post.publishedDate
-          ? new Date(post.publishedDate)
-          : new Date(),
-      }));
+    if (blogEnabled) {
+      const result = await getPublishedBlogPosts();
+      if (result.success) {
+        postPages = result.data.map((post) => ({
+          url: `${SITE_URL}/blog/${post.slug}`,
+          lastModified: post.publishedDate
+            ? new Date(post.publishedDate)
+            : new Date(),
+        }));
+      }
     }
   } catch {
     // Database unreachable — the sitemap still returns the static pages.

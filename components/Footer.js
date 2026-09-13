@@ -1,25 +1,29 @@
 // WHAT THIS FILE DOES: The footer shown at the bottom of every public
 // page. It's added once in app/(site)/layout.js, so it automatically
 // appears on the homepage, /projects, and /reviews — but never inside the
-// admin area. It shows a plain "Admin Login" link to /admin/login — never
+// admin area. Its email link and social icons come from the admin
+// "Contact & Social" page — the same settings used on the Contact page and
+// the homepage's closing section, so there's exactly one place to update
+// them. It also shows a plain "Admin Login" link to /admin/login — never
 // automatically signed in, always requiring the real email and password on
 // that page — controlled by the "Show admin login link in footer" switch
-// on the admin Settings page (on by default). It runs in the browser
-// because it checks that switch in the real database.
+// on the admin Settings page (on by default). Runs in the browser because
+// it checks these settings in the real database.
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getSiteSettings } from "@/lib/firestore";
+import { getSiteSettings, DEFAULT_SITE_SETTINGS } from "@/lib/firestore";
+import SocialLinksRow from "@/components/SocialLinksRow";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [showAdminLoginLink, setShowAdminLoginLink] = useState(true);
+  const [settings, setSettings] = useState(DEFAULT_SITE_SETTINGS);
 
   useEffect(() => {
     getSiteSettings().then((result) => {
-      setShowAdminLoginLink(result.data.showAdminLoginLink);
+      setSettings(result.data);
     });
   }, []);
 
@@ -34,24 +38,26 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* PLACEHOLDER LINKS: both hrefs below are "#" for now. Replace the
-            first with the real LinkedIn page URL, and the second with
-            "mailto:you@example.com" once there's a real email to use. */}
-        <div className="flex gap-6 text-sm">
-          <a href="#" className="text-muted transition-colors hover:text-accent">
-            LinkedIn
-          </a>
-          <a href="#" className="text-muted transition-colors hover:text-accent">
-            Email
-          </a>
-          {showAdminLoginLink && (
-            <Link
-              href="/admin/login"
-              className="text-muted transition-colors hover:text-accent"
-            >
-              Admin Login
-            </Link>
-          )}
+        <div className="flex flex-col items-center gap-4 text-sm sm:items-end">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:justify-end">
+            {settings.businessEmail && (
+              <a
+                href={`mailto:${settings.businessEmail}`}
+                className="text-muted transition-colors hover:text-accent"
+              >
+                Email
+              </a>
+            )}
+            {settings.showAdminLoginLink && (
+              <Link
+                href="/admin/login"
+                className="text-muted transition-colors hover:text-accent"
+              >
+                Admin Login
+              </Link>
+            )}
+          </div>
+          <SocialLinksRow socialLinks={settings.socialLinks} />
         </div>
       </div>
 

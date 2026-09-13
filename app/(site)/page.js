@@ -23,7 +23,20 @@ import {
   getAllReviews,
   getAllHomepageVideos,
   getPageSections,
+  getSiteSettings,
+  DEFAULT_SITE_SETTINGS,
 } from "@/lib/firestore";
+
+// Maps a homepage section's type to the Settings toggle that can switch it
+// off entirely, on top of its own per-section visible flag from the admin
+// Pages editor. Only applies here, on the homepage — the dedicated
+// /reviews page's own reviews section is unaffected by
+// "homepageReviewsEnabled".
+const SECTION_SETTINGS_KEY = {
+  featuredWork: "featuredWorkEnabled",
+  homepageVideos: "homepageVideosEnabled",
+  reviewsFeed: "homepageReviewsEnabled",
+};
 
 export default function Home() {
   const [status, setStatus] = useState("loading"); // loading | error | ready
@@ -31,19 +44,26 @@ export default function Home() {
   const [reviews, setReviews] = useState([]);
   const [videos, setVideos] = useState([]);
   const [sections, setSections] = useState([]);
+  const [settings, setSettings] = useState(DEFAULT_SITE_SETTINGS);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
     async function load() {
-      const [projectsResult, reviewsResult, videosResult, sectionsResult] =
-        await Promise.all([
-          getAllProjects(),
-          getAllReviews(),
-          getAllHomepageVideos(),
-          getPageSections("home"),
-        ]);
+      const [
+        projectsResult,
+        reviewsResult,
+        videosResult,
+        sectionsResult,
+        settingsResult,
+      ] = await Promise.all([
+        getAllProjects(),
+        getAllReviews(),
+        getAllHomepageVideos(),
+        getPageSections("home"),
+        getSiteSettings(),
+      ]);
 
       if (!isMounted) return;
 
@@ -59,6 +79,7 @@ export default function Home() {
       setReviews(reviewsResult.data);
       setVideos(videosResult.success ? videosResult.data : []);
       setSections(sectionsResult.success ? sectionsResult.data : []);
+      setSettings(settingsResult.data);
       setStatus("ready");
     }
 
@@ -70,7 +91,12 @@ export default function Home() {
   }, []);
 
   const featuredReviews = reviews.filter((review) => review.featured);
-  const visibleSections = sections.filter((section) => section.visible);
+  const visibleSections = sections
+    .filter((section) => section.visible)
+    .filter((section) => {
+      const settingsKey = SECTION_SETTINGS_KEY[section.type];
+      return settingsKey ? settings[settingsKey] : true;
+    });
 
   return (
     <>
@@ -94,7 +120,7 @@ export default function Home() {
             sections={visibleSections}
             data={{ projects, reviews, videos, reviewsFilter: "featured" }}
           />
-          {featuredReviews.length > 0 && (
+          {settings.homepageReviewsEnabled && featuredReviews.length > 0 && (
             <div className="mx-auto -mt-8 max-w-6xl px-6 pb-16 text-center">
               <Link
                 href="/reviews"
@@ -104,7 +130,7 @@ export default function Home() {
               </Link>
             </div>
           )}
-          <ClosingCTA />
+          <ClosingCTA showEnquiryForm />
         </>
       )}
     </>

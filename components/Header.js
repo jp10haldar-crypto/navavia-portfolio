@@ -3,26 +3,41 @@
 // it stays stuck to the top of the screen as you scroll ("sticky"). It runs
 // in the visitor's browser (not just once on the server) because it needs
 // to react to clicks — opening/closing the mobile menu, and highlighting
-// whichever page link is currently active.
+// whichever page link is currently active. The Blog and Services links
+// disappear automatically if the admin turns that whole page off in
+// Settings — checked against the same settings the pages themselves use to
+// decide whether to show at all.
 
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getSiteSettings, DEFAULT_SITE_SETTINGS } from "@/lib/firestore";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/reviews", label: "Reviews" },
-  { href: "/blog", label: "Blog" },
-  { href: "/services", label: "Services" },
+  { href: "/blog", label: "Blog", settingsKey: "blogEnabled" },
+  { href: "/services", label: "Services", settingsKey: "servicesEnabled" },
   { href: "/contact", label: "Contact" },
 ];
 
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_SITE_SETTINGS);
+
+  useEffect(() => {
+    getSiteSettings().then((result) => {
+      setSettings(result.data);
+    });
+  }, []);
+
+  const visibleNavLinks = NAV_LINKS.filter(
+    (link) => !link.settingsKey || settings[link.settingsKey]
+  );
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-white/10">
@@ -47,7 +62,7 @@ export default function Header() {
         {/* Desktop navigation links — hidden on narrow screens, shown from
             the "md" breakpoint (tablet/laptop width) upward. */}
         <nav className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
+          {visibleNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -80,7 +95,7 @@ export default function Header() {
           a link closes the menu and navigates to that page. */}
       {isMenuOpen && (
         <nav className="flex flex-col gap-4 border-t border-white/10 bg-background px-6 pb-6 md:hidden">
-          {NAV_LINKS.map((link) => (
+          {visibleNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}

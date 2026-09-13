@@ -6,11 +6,14 @@
 // instantly with no spinner, exactly as it always has, and so its metadata
 // below still works for search engines and social sharing. Ends with the
 // same "Ready to get started?" section used on the homepage — that section
-// is fixed, not admin-editable (see docs/DECISIONS.md).
+// is fixed, not admin-editable (see docs/DECISIONS.md). If the admin turns
+// this whole page off in Settings, it behaves as if it doesn't exist at
+// all — the normal "Page Not Found" screen, same as any broken link.
 
+import { notFound } from "next/navigation";
 import ClosingCTA from "@/components/ClosingCTA";
 import PageSections from "@/components/PageSections";
-import { getPageSections } from "@/lib/firestore";
+import { getPageSections, getSiteSettings } from "@/lib/firestore";
 
 export const metadata = {
   title: "What We Build — Navavia",
@@ -31,6 +34,11 @@ export const metadata = {
 };
 
 export default async function ServicesPage() {
+  const settingsResult = await getSiteSettings();
+  if (!settingsResult.data.servicesEnabled) {
+    notFound();
+  }
+
   const result = await getPageSections("services");
   const sections = result.success
     ? result.data.filter((section) => section.visible)

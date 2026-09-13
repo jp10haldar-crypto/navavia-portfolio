@@ -5,10 +5,17 @@
 // Unlike most other public pages in this project, this one loads its data
 // on the SERVER, not in the browser — that's what lets search engines and
 // social media previews see the real post titles immediately, which is
-// the whole point of a blog built for SEO.
+// the whole point of a blog built for SEO. If the admin turns the whole
+// blog off in Settings, this behaves as if it doesn't exist at all — the
+// normal "Page Not Found" screen.
 
+import { notFound } from "next/navigation";
 import PageSections from "@/components/PageSections";
-import { getPublishedBlogPosts, getPageSections } from "@/lib/firestore";
+import {
+  getPublishedBlogPosts,
+  getPageSections,
+  getSiteSettings,
+} from "@/lib/firestore";
 
 export const metadata = {
   title: "Insights — Navavia",
@@ -17,6 +24,11 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
+  const settingsResult = await getSiteSettings();
+  if (!settingsResult.data.blogEnabled) {
+    notFound();
+  }
+
   const [postsResult, sectionsResult] = await Promise.all([
     getPublishedBlogPosts(),
     getPageSections("blog"),
