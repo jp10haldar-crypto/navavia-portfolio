@@ -360,11 +360,21 @@ the exact steps to re-publish the rules and verify the import for real.
 
 ## IN PROGRESS
 
-_Nothing in progress right now._
+### Contact form and enquiries dashboard (Step 9 in the build plan)
+**What's done so far:** The database security rules — these decide who's
+allowed to send, read, update, or delete enquiries once the real contact
+form is connected. Waiting on you to republish them in the Firebase
+Console before the rest of this step (the public contact form and the
+admin enquiries dashboard) can be built and actually tested.
+**Files changed:**
+- `firestore.rules` — added a rule for a new `enquiries` collection:
+  anyone (including visitors who aren't signed in) can submit one, but
+  only the signed-in admin can read, change, or delete them.
+**What's next:** Once you confirm the rules are republished, the contact
+page itself and the admin enquiries dashboard will follow.
 
 ## NOT STARTED
 
 - Step 8: Blog section for SEO
-- Step 9: Contact and enquiry form
 - Step 10: Social media links and embeds
 - Step 11: Deploy to Vercel
