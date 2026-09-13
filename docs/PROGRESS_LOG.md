@@ -403,6 +403,34 @@ dashboard using the new Delete button (a good first real test of it).
 **What you should see:** See the message given alongside this update for
 the exact order to test everything.
 
+### 2026-09-13 — Investigated: missing "See It In Action" video
+**What was reported:** The video section appeared to have disappeared
+from project detail pages after switching to Firestore.
+**What was actually found (confirmed by reading the real data straight out
+of Firestore, not just the code):** The database is correct — project 1
+genuinely has `youtubeId: "jNQXAC9IVRw"` (the working test video) right
+now, and the video section's code was never changed or removed; it was
+still exactly as built (always shows the heading, iframe if there's a
+video, placeholder if not). Every other field in every project and review
+was also checked against `data/projects.js`/`data/reviews.js` one by one —
+nothing else was lost in the Firestore switch, and the admin forms already
+had a field for every one of them. The most likely explanation: this was
+seen before the starter-data import actually succeeded (which was broken
+until a few updates ago — see the "Import Starter Data was silently
+failing" entry above), not a new, separate bug.
+**Two real gaps fixed anyway, found while checking the video field:**
+- The admin form's video field was labeled "Walkthrough Video" instead of
+  the clearer "YouTube Video Link."
+- Pasting something that isn't a recognizable YouTube link used to save
+  silently as "no video," with no explanation. Now it's caught before
+  saving, with a clear message naming the accepted link formats.
+**Files changed:**
+- `components/admin/ProjectForm.js` — relabeled the video field; added
+  validation that blocks saving (with a clear message) if the pasted text
+  isn't a recognizable YouTube link.
+**What you should see:** See the message given alongside this update for
+how to confirm the video is showing.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

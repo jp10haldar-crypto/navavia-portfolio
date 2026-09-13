@@ -1,10 +1,13 @@
 // WHAT THIS FILE DOES: The form used for both "Add New Project" and
 // "Edit Project" — one form, reused for both, since the fields are
 // identical. It checks required fields before saving, turns any full
-// YouTube link pasted in into just the video id automatically, lets you
-// upload real screenshot images (or paste a URL instead), and saves
-// straight to the real database through lib/firestore.js. Runs in the
-// browser because it reacts to typing, uploads, and the Save click.
+// YouTube link pasted in (watch?v=, youtu.be/, or embed/ links) into just
+// the video id automatically — and if what's pasted isn't recognizable as
+// a YouTube link at all, it blocks saving and explains why instead of
+// silently saving "no video." It also lets you upload real screenshot
+// images (or paste a URL instead), and saves straight to the real
+// database through lib/firestore.js. Runs in the browser because it
+// reacts to typing, uploads, and the Save click.
 
 "use client";
 
@@ -35,6 +38,7 @@ export default function ProjectForm({ projectId, initialProject }) {
     adminScreenshots: initialProject?.adminScreenshots ?? [],
   });
   const [missingFields, setMissingFields] = useState([]);
+  const [youtubeError, setYoutubeError] = useState("");
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -61,11 +65,26 @@ export default function ProjectForm({ projectId, initialProject }) {
     event.preventDefault();
 
     const missing = findMissingFields();
-    if (missing.length > 0) {
+
+    // Figure out the video id now (not just at save time) so an
+    // unrecognizable paste can be caught and reported clearly, instead of
+    // silently being saved as "no video."
+    const trimmedYoutubeInput = values.youtubeInput.trim();
+    const resolvedYoutubeId = extractYouTubeId(trimmedYoutubeInput);
+    const youtubeLooksInvalid =
+      trimmedYoutubeInput.length > 0 && resolvedYoutubeId === "";
+
+    if (missing.length > 0 || youtubeLooksInvalid) {
       setMissingFields(missing);
+      setYoutubeError(
+        youtubeLooksInvalid
+          ? "That doesn't look like a YouTube link. Paste something like https://www.youtube.com/watch?v=..., https://youtu.be/..., or https://www.youtube.com/embed/..."
+          : ""
+      );
       return;
     }
     setMissingFields([]);
+    setYoutubeError("");
     setSaveError("");
     setIsSaving(true);
 
@@ -76,7 +95,7 @@ export default function ProjectForm({ projectId, initialProject }) {
       longDescription: values.longDescription.trim(),
       techUsed: splitList(values.techUsed),
       liveUrl: values.liveUrl.trim(),
-      youtubeId: extractYouTubeId(values.youtubeInput),
+      youtubeId: resolvedYoutubeId,
       featured: values.featured,
       customerScreenshots: values.customerScreenshots,
       adminScreenshots: values.adminScreenshots,
@@ -158,7 +177,7 @@ export default function ProjectForm({ projectId, initialProject }) {
       </Field>
 
       <Field
-        label="Walkthrough Video"
+        label="YouTube Video Link"
         hint="Paste the full YouTube link — the video id is pulled out automatically. Leave blank if there's no video yet."
       >
         <input
@@ -167,6 +186,9 @@ export default function ProjectForm({ projectId, initialProject }) {
           onChange={(event) => updateField("youtubeInput", event.target.value)}
           className={INPUT_CLASSES}
         />
+        {youtubeError && (
+          <p className="mt-1 text-xs text-red-400">{youtubeError}</p>
+        )}
       </Field>
 
       <Field
