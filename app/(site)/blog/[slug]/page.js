@@ -3,32 +3,32 @@
 // browser), which is what lets this page set a real, correct page title,
 // description, and social-media preview image for each individual post —
 // essential for a blog built for search engines and for looking right
-// when shared on LinkedIn or WhatsApp. If the slug doesn't match any post
-// (or matches a draft you're not signed in to view), it shows a clean
-// "Post not found" message instead of crashing.
+// when shared on LinkedIn or WhatsApp. If the slug genuinely doesn't match
+// any published post, it shows a clean "Post not found" message. If
+// something else goes wrong (e.g. the database can't be reached), it says
+// so honestly instead — it never pretends a real error is a missing post.
 
 import Link from "next/link";
 import BlogPostView from "@/components/BlogPostView";
-import { getBlogPostBySlug, getPublishedBlogPosts } from "@/lib/firestore";
+import {
+  getPublishedBlogPostBySlug,
+  getPublishedBlogPosts,
+} from "@/lib/firestore";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-
-async function loadPost(slug) {
-  const result = await getBlogPostBySlug(slug);
-  return result.success ? result.data : null;
-}
 
 // Sets this exact post's title, description, and social-share preview
 // image. Runs automatically before the page renders — nothing needs to
 // call this by hand.
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const post = await loadPost(slug);
+  const result = await getPublishedBlogPostBySlug(slug);
 
-  if (!post) {
+  if (!result.success) {
     return { title: "Post not found — Navavia" };
   }
 
+  const post = result.data;
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt;
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
@@ -55,9 +55,20 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
-  const post = await loadPost(slug);
+  const result = await getPublishedBlogPostBySlug(slug);
 
-  if (!post) {
+  if (!result.success) {
+    // notFound === true: no post with this slug exists (or it's a draft).
+    // notFound === false: something actually went wrong (e.g. the
+    // database couldn't be reached) — say that honestly instead.
+    if (!result.notFound) {
+      return (
+        <div className="mx-auto max-w-xl px-6 py-24 text-center text-muted">
+          {result.message}
+        </div>
+      );
+    }
+
     return (
       <div className="mx-auto max-w-xl px-6 py-24 text-center">
         <h1 className="text-2xl font-bold text-foreground">
@@ -76,6 +87,8 @@ export default async function BlogPostPage({ params }) {
       </div>
     );
   }
+
+  const post = result.data;
 
   const allPublished = await getPublishedBlogPosts();
   const relatedPosts = allPublished.success

@@ -587,6 +587,45 @@ actually works, not just that it compiles.
 **What you should see:** See the message given alongside this update for
 how to write and publish your first post.
 
+### 2026-09-13 — Fixed: clicking a blog post said "Post not found"
+**What was wrong (confirmed by directly reproducing it against the real
+database, not just reading the code):** the single-post lookup searched
+Firestore for a post matching the slug in the URL, but never mentioned
+"published" in that search. Firestore's security rules say a post is
+readable if it's published OR you're signed in — but for a *search*
+(rather than "get this exact item"), Firestore has to be able to tell
+from the search itself, before looking at any data, that every possible
+result satisfies the rule. A search that only asked for a matching slug
+couldn't prove that in advance, so Firestore refused it outright for a
+signed-out visitor — even for a post that genuinely was published. I
+proved this by running the exact same search by hand against the real
+database: searching with "published" included in the search succeeded,
+searching without it failed, on the very same post. The slug itself was
+never the problem — it matched correctly the whole time.
+**Files changed:**
+- `lib/firestore.js` — added `getPublishedBlogPostBySlug()`, which
+  includes "published == true" directly in the search (not just checked
+  afterward) so Firestore can verify it upfront. The public post page now
+  uses this instead of the old admin-only `getBlogPostBySlug()` (which is
+  kept, unchanged, for the admin form's slug-uniqueness check — that one
+  is always called while signed in, so it was never affected by this bug).
+- `app/(site)/blog/[slug]/page.js` — now distinguishes "no such post"
+  from "something actually went wrong" (e.g. a real database error) and
+  shows an honest message for each, instead of collapsing every failure
+  into "Post not found."
+- `app/(site)/blog/[slug]/loading.js` — new. Shows "Loading post..." if
+  the database is slow to respond, so there's never a gap where the wrong
+  message could show.
+**Confirmed after the fix:** the one currently-published post
+("How Much Does It Cost to Build a Website...") now opens correctly, a
+genuinely nonexistent slug still correctly shows "Post not found," and
+/projects, every project detail page, /reviews, /blog, and /contact were
+all re-checked and still work — this bug was isolated to the single blog
+post page and nowhere else, since it's the only page whose security rule
+depends on a field (published) that its own search wasn't checking for.
+**What you should see:** See the message given alongside this update for
+confirmation every post now opens.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
