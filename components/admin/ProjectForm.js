@@ -193,21 +193,21 @@ export default function ProjectForm({ projectId, initialProject }) {
 
       <Field
         label="Customer Screenshots"
-        hint="Upload one or more images, or paste a URL. Drag a thumbnail to reorder."
+        hint="Select or drag several images at once, or paste a URL. Add a caption under each one, and drag a thumbnail to reorder."
       >
         <ImageListUploader
           value={values.customerScreenshots}
-          onChange={(urls) => updateField("customerScreenshots", urls)}
+          onChange={(images) => updateField("customerScreenshots", images)}
         />
       </Field>
 
       <Field
         label="Admin Panel Screenshots"
-        hint="Upload one or more images, or paste a URL. Drag a thumbnail to reorder."
+        hint="Select or drag several images at once, or paste a URL. Add a caption under each one, and drag a thumbnail to reorder."
       >
         <ImageListUploader
           value={values.adminScreenshots}
-          onChange={(urls) => updateField("adminScreenshots", urls)}
+          onChange={(images) => updateField("adminScreenshots", images)}
         />
       </Field>
 

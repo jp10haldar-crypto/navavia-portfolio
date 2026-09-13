@@ -916,6 +916,32 @@ once the live-site problem is solved — see the on-page warning banner.
 **Proof:** rebuilt (`npm run build`) and re-linted (`npm run lint`) — both clean. Restarted the dev server and loaded every public and admin page with no new errors. Directly tested the "turn a whole page off" behavior by temporarily flipping the Services default off, confirming `/services` genuinely returns the normal "Page Not Found" response, then flipping it back and confirming the diff was clean before committing.
 **What you still need to do:** the `firestore.rules` file itself didn't need any changes this time (the existing `settings` rule already covers all these new fields) — but if you haven't already published the rules update from the last session, do that first, since these new settings live in that same collection.
 
+### 2026-09-13 — Multi-image upload with captions, and a swipeable screenshot popup
+**What was asked:** upload several screenshots at once with individual captions, and let visitors swipe/click through screenshots in the enlarged popup instead of only seeing one at a time.
+
+**Part A — multi-image upload with captions:**
+- The Customer Screenshots and Admin Panel Screenshots fields on the project form now accept selecting or dragging several image files at once.
+- Each one shows its own upload progress (a percentage), independently of the others.
+- If one fails (wrong file type, too large, a connection problem), the others keep uploading — the failed one shows its exact file name and the reason, with a way to dismiss it.
+- Every uploaded image now has its own caption text box underneath its thumbnail.
+- Existing screenshots saved before captions existed keep working exactly as before, just with a blank caption until you add one.
+- The existing "paste an image URL" option was kept as an alternative to uploading, since it wasn't asked to be removed.
+
+**Part B — swipeable screenshot popup:**
+- Clicking a screenshot on a project's page still opens it enlarged, but you can now move to the next/previous image without closing it: on-screen arrow buttons, the left/right arrow keys, or swiping left/right on a phone.
+- The popup shows the image's caption underneath it and a "3 of 7" counter.
+- Customer screenshots and admin screenshots are completely separate — each popup only ever moves through its own set.
+- It stops at the first and last image instead of wrapping around; the arrow with nowhere further to go is greyed out and does nothing.
+- The page behind the popup can't be scrolled while it's open; Escape, the × button, or clicking the dark background still closes it.
+
+**Two real bugs found and fixed during this work (not shipped):**
+1. `components/ProjectCard.js` used a project's first screenshot directly as an image source — once screenshots could be `{ url, caption }` objects instead of plain links, this would have silently broken every project card's thumbnail. Fixed to read `.url` from either the old or new format.
+2. The popup's "stop the page behind it from scrolling" logic was originally combined with the arrow-key logic in one effect that re-ran on every next/previous click — tracing it through revealed that would leave the page stuck unable to scroll after closing the popup, in some cases. Split into two separate, correctly-scoped effects before this ever reached you.
+
+**What could not be verified directly:** this environment has no browser automation tool, so the actual dragging, swiping, and on-screen clicking couldn't be clicked through by hand before reporting this done. Verified everything else available instead: a completely clean rebuild, and a real concurrent-upload test run directly against Cloudinary (two valid images plus one deliberately invalid file, uploaded at the same time) confirming the two valid ones succeeded independently of the failing one — proof of the exact mechanism the on-screen progress bars depend on. Step-by-step manual testing instructions are provided alongside this update so you can confirm the on-screen behavior yourself.
+
+**Files changed:** `components/admin/ImageListUploader.js` (rewritten for multi-select, per-file progress, and captions), `components/admin/ProjectForm.js` (updated hint text), `components/ScreenshotGallery.js` (rewritten with next/prev navigation, captions, counter, swipe, keyboard, scroll-lock), `components/ProjectCard.js` (bug fix described above).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

@@ -12,7 +12,12 @@ import { useState } from "react";
 
 export default function ProjectCard({ project }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const thumbnail = project.customerScreenshots?.[0];
+  // The first screenshot is normally { url, caption }; older projects
+  // saved before captions existed have a plain URL string instead — this
+  // works with either.
+  const firstScreenshot = project.customerScreenshots?.[0];
+  const thumbnail =
+    typeof firstScreenshot === "string" ? firstScreenshot : firstScreenshot?.url;
   const showImage = thumbnail && !imageFailed;
 
   return (
