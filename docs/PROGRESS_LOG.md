@@ -816,6 +816,45 @@ should now show a clear message within 15 seconds instead of loading
 forever — but this should be rare in the first place, since Firestore
 almost always answers in well under a second.
 
+### 2026-09-13 — Temporary diagnostic page for the live "stuck loading" issue
+**What was reported:** even after the 15-second timeout fix, the live
+Vercel site was still stuck on "Loading our work..." forever. The security
+rules are correct, and everything works fine on localhost — which points at
+something specific to the live/Vercel environment (like a missing or wrong
+environment variable there) rather than a code bug. Reading raw browser
+console errors is hard without a coding background, so a plain-English
+diagnostic page was built instead.
+**What was built:** a temporary page at `/debug` that anyone can open on the
+live site (no login needed) and read in plain, large text:
+- Whether each of the 10 `NEXT_PUBLIC_...` environment variables the app
+  needs is PRESENT or MISSING on the live site — never the actual value,
+  only whether it exists.
+- Whether Firebase itself started up successfully (YES/NO), and if not,
+  the exact error message.
+- A live, right-now attempt to read each of the four collections the
+  public site depends on (Projects, Reviews, Homepage Videos, Blog Posts) —
+  how many items came back, or the exact error, plus how long each attempt
+  took.
+**Files created/changed:**
+- `app/debug/page.js` — the diagnostic page itself.
+- `app/debug/layout.js` — tells search engines never to index this page.
+- `app/robots.js` — added `/debug` to the disallow list, alongside `/admin`.
+- `lib/firebase.js` — the exact Firebase startup error (previously only
+  logged to the browser console, invisible without opening dev tools) is
+  now also exported as `firebaseInitError` so this page can show it in
+  plain text.
+**Proof:** rebuilt (`npm run build`) and re-linted (`npm run lint`) — both
+clean, with `/debug` appearing as a normal page in the build output.
+Restarted the dev server and confirmed `/debug` loads with no errors, and
+that `/robots.txt` now lists `/debug` as disallowed.
+**What you should do:** open `https://<your-live-site>.vercel.app/debug`
+and read what it says — especially section 1 (which environment variables
+are MISSING on Vercel) and section 2 (Firebase's exact startup error, if
+any). That will show directly whether this is a missing/misspelled
+environment variable in Vercel's settings rather than a code problem.
+**Reminder:** this page is temporary. Delete the whole `app/debug` folder
+once the live-site problem is solved — see the on-page warning banner.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
