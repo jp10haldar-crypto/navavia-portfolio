@@ -28,6 +28,9 @@
 // - Anyone can READ the site settings (a small on/off-switches document —
 //   currently just whether the "Admin Login" link shows in the public
 //   footer), but only the signed-in admin can change it.
+// - Anyone can READ page content (the sections every public page is built
+//   from), but only the signed-in admin can add, edit, delete, or reorder
+//   them.
 // - Anything not explicitly allowed above is denied — the last rule below
 //   blocks every other collection/action by default, as a safety net.
 //
@@ -82,6 +85,14 @@ service cloud.firestore {
     // public footer needs to check it — but only a signed-in admin can
     // change it.
     match /settings/{settingId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // The sections every public page is built from (see the admin "Pages"
+    // editor). Anyone can read them — every public page needs to display
+    // them — but only a signed-in admin can add, edit, delete, or reorder.
+    match /pageContent/{sectionId} {
       allow read: if true;
       allow write: if request.auth != null;
     }

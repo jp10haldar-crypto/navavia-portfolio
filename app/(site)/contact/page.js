@@ -2,13 +2,18 @@
 // Visitors fill in the form and click "Send Enquiry" — no page reload, no
 // login needed. On success it's replaced with a thank-you message; on
 // failure everything they typed stays exactly as it was, with a clear
-// error instead. Also shows contact details alongside the form. Runs in
-// the browser because it reacts to typing and the button click.
+// error instead. The page's intro heading/subheading comes from the admin
+// Pages editor; the form itself (fields, validation, sending the enquiry)
+// and the Email/LinkedIn info box stay fixed in this file, since they're a
+// working feature and known placeholder content, not general wording — see
+// docs/DECISIONS.md. Runs in the browser because it reacts to typing and
+// the button click.
 
 "use client";
 
-import { useState } from "react";
-import { addEnquiry } from "@/lib/firestore";
+import { useEffect, useState } from "react";
+import { addEnquiry, getPageSections } from "@/lib/firestore";
+import PageSections from "@/components/PageSections";
 import {
   isValidEmail,
   hasReachedEnquiryLimit,
@@ -44,6 +49,15 @@ export default function ContactPage() {
   const [submitError, setSubmitError] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isSent, setIsSent] = useState(false);
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    getPageSections("contact").then((result) => {
+      if (result.success) {
+        setSections(result.data.filter((section) => section.visible));
+      }
+    });
+  }, []);
 
   function updateField(field, value) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -116,15 +130,11 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-        Get in Touch
-      </h1>
-      <p className="mt-3 max-w-xl text-muted">
-        Tell us a bit about what you need, and we&apos;ll get back to you.
-      </p>
+    <div>
+      <PageSections sections={sections} pageTitleFromFirstSection />
 
-      <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_300px]">
+      <div className="mx-auto max-w-5xl px-6 pb-16">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_300px]">
         <div className="flex flex-col gap-5">
           <Field label="Full Name" error={errors.fullName}>
             <input
@@ -239,6 +249,7 @@ export default function ContactPage() {
             We work with clients worldwide.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

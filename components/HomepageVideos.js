@@ -5,9 +5,15 @@
 // and sorted by display order — the homepage is the one that fetches from
 // the real database and decides that before passing them in here. The
 // first video shows large; the rest show smaller in a row beneath it. If
-// there are none, this section hides itself completely.
+// there are none, this section hides itself completely. Its heading/
+// subheading come from the admin Pages editor (with fallback defaults if
+// left blank).
 
-export default function HomepageVideos({ videos }) {
+export default function HomepageVideos({
+  videos,
+  heading = "How We Work",
+  subheading = "A closer look at what we build and how we build it.",
+}) {
   if (!videos || videos.length === 0) {
     return null;
   }
@@ -17,11 +23,9 @@ export default function HomepageVideos({ videos }) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-        How We Work
+        {heading || "How We Work"}
       </h2>
-      <p className="mt-3 max-w-xl text-muted">
-        A closer look at what we build and how we build it.
-      </p>
+      {subheading && <p className="mt-3 max-w-xl text-muted">{subheading}</p>}
 
       <div className="mt-8">
         <VideoBlock video={featuredVideo} />

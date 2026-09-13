@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/homepage-videos", label: "Homepage Videos" },
   { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/pages", label: "Pages" },
   { href: "/admin/settings", label: "Settings" },
 ];
 
