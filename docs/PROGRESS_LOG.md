@@ -626,6 +626,31 @@ depends on a field (published) that its own search wasn't checking for.
 **What you should see:** See the message given alongside this update for
 confirmation every post now opens.
 
+### 2026-09-13 — Fixed: brand name duplicated in blog post tab titles
+**What was wrong:** the page template always added "— Navavia" to the
+browser tab title, even when the admin had already typed their own SEO
+Title containing the brand name — producing things like "...2026 | NAVAVIA
+— Navavia." The post's saved data was never wrong; only the template was
+double-adding the brand name.
+**Files changed:**
+- `app/(site)/blog/[slug]/page.js` — the tab title and social-share
+  preview title now use a custom SEO Title exactly as typed, with nothing
+  added. "— Navavia" is only appended automatically when that field is
+  left blank.
+- `components/admin/BlogPostForm.js` — the SEO Title field's label and
+  hint now say plainly that it's used exactly as typed, and that "—
+  Navavia" is only added automatically if it's left empty.
+- `docs/DECISIONS.md` — logged this rule, plus the general Firestore
+  lesson from the previous bug fix: when a security rule depends on a
+  field, any search on that collection must include that field in the
+  search itself, or Firestore blocks it regardless of the real data.
+**Confirmed:** the existing post's own saved SEO Title was already
+correct — re-tested directly through the running site, and its tab title
+now reads exactly what was typed, with no duplication, in both the
+browser tab and the social-share preview. Checked /projects, every project
+detail page, /reviews, and /contact — none of them have a per-item
+editable title field, so this duplication had no equivalent there.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

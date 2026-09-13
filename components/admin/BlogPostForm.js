@@ -250,8 +250,10 @@ export default function BlogPostForm({ postId, initialPost }) {
       </Field>
 
       <Field
-        label="SEO Title"
-        hint="Shown in the browser tab and search results. Leave blank to use the Title above."
+        label="SEO Title (used exactly as typed — nothing is added to it)"
+        hint={
+          'Shown in the browser tab and search results, word-for-word — add "Navavia" yourself here if you want it included. Leave blank to use the Title above followed by "— Navavia" automatically.'
+        }
       >
         <input
           type="text"

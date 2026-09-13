@@ -20,6 +20,11 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 // Sets this exact post's title, description, and social-share preview
 // image. Runs automatically before the page renders — nothing needs to
 // call this by hand.
+//
+// Title rule: if the admin typed a custom SEO Title, it's used exactly as
+// typed — nothing is added to it. Only when that field is left empty does
+// this add "— Navavia" automatically, so the brand name never appears
+// twice just because someone already included it themselves.
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const result = await getPublishedBlogPostBySlug(slug);
@@ -29,12 +34,12 @@ export async function generateMetadata({ params }) {
   }
 
   const post = result.data;
-  const title = post.metaTitle || post.title;
+  const title = post.metaTitle ? post.metaTitle : `${post.title} — Navavia`;
   const description = post.metaDescription || post.excerpt;
   const postUrl = `${SITE_URL}/blog/${post.slug}`;
 
   return {
-    title: `${title} — Navavia`,
+    title,
     description,
     alternates: { canonical: postUrl },
     openGraph: {
