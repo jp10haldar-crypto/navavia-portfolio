@@ -651,11 +651,57 @@ browser tab and the social-share preview. Checked /projects, every project
 detail page, /reviews, and /contact — none of them have a per-item
 editable title field, so this duplication had no equivalent there.
 
+### 2026-09-13 — Deploy prep (Step 11, Part A)
+**What was built:** Everything needed to make the site ready for a real,
+public deployment — checked and fixed for real, not just assumed fine.
+**What was found and fixed:**
+- Ran a real production build (`npm run build`) — compiled cleanly, no
+  errors. It never runs ESLint itself, so also ran `npm run lint`
+  separately and found 6 real errors (a newer rule, `react-hooks/set-
+  state-in-effect`, flagging the "fetch on mount" pattern used in every
+  admin list page). Fixed all 6 by switching that pattern from an `async`/
+  `await` function to a `.then()` chain — confirmed clean by re-running
+  both the linter and the build afterward. See docs/DECISIONS.md for the
+  exact pattern, since it's now the standard for this shape of code here.
+- Confirmed `.env.local` is still ignored by git (`git check-ignore`
+  confirms it), and searched every tracked file for hardcoded API keys or
+  secrets — found none. Every config value reads from `process.env`.
+- Confirmed `/sitemap.xml` and `/robots.txt` both work and `/admin` is
+  correctly blocked — checked directly against the running site, not just
+  the code.
+**Files created:**
+- `app/not-found.js` — a proper, branded "page not found" message (with
+  Header/Footer) for any web address that doesn't match a real page,
+  replacing Next.js's plain default.
+- `app/opengraph-image.js` — automatically generates the image shown when
+  the homepage is shared on WhatsApp/LinkedIn (brand colors, name, tagline)
+  — confirmed by viewing the actual generated image.
+**Files changed:**
+- `app/layout.js` — added `metadataBase` (needed for the share image to
+  resolve to a real link) and a fuller Open Graph/Twitter metadata block.
+- `components/ProjectCard.js`, `BlogPostCard.js`, `ScreenshotGallery.js` —
+  added `loading="lazy"` to below-the-fold images, so they only download
+  as a visitor scrolls to them.
+- `app/admin/(panel)/projects/page.js`, `reviews/page.js`,
+  `enquiries/page.js`, `homepage-videos/page.js`, `blog/page.js`,
+  `page.js` (Dashboard) — the lint fixes described above.
+- `docs/DECISIONS.md` — logged the site-URL environment variable, the
+  generated share image, the `.then()` data-loading pattern, and why
+  `not-found.js` has to live at the top level.
+**On loading speed:** the two largest pieces of JavaScript in the whole
+app are Firebase (needed everywhere) and the rich text editor (needed only
+for writing blog posts) — checked directly in the build output that the
+editor's code is NOT included in the public site's files at all, only in
+the two admin pages that actually use it, exactly as intended.
+**What's next:** Part B — the actual Vercel deployment — needs you to act
+in the Vercel website yourself. See the message given alongside this
+update for the exact steps.
+
 ## IN PROGRESS
 
-_Nothing in progress right now._
+- Step 11: Deploy to Vercel — Part A (prep) is done; Part B (the actual
+  deployment on Vercel) is next, and needs you to act.
 
 ## NOT STARTED
 
 - Step 10: Social media links and embeds
-- Step 11: Deploy to Vercel

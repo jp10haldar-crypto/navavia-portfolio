@@ -23,6 +23,7 @@ export default function BlogPostCard({ post }) {
           <img
             src={post.coverImage}
             alt={post.title}
+            loading="lazy"
             className="h-full w-full object-cover"
           />
         ) : (

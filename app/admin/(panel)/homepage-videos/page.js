@@ -24,13 +24,14 @@ export default function AdminHomepageVideosPage() {
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
 
-  async function loadVideos() {
-    const result = await getAllHomepageVideos();
-    if (result.success) {
-      setVideos(result.data);
-    } else {
-      setLoadError(result.message);
-    }
+  function loadVideos() {
+    return getAllHomepageVideos().then((result) => {
+      if (result.success) {
+        setVideos(result.data);
+      } else {
+        setLoadError(result.message);
+      }
+    });
   }
 
   useEffect(() => {

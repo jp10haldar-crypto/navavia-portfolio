@@ -19,9 +19,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 export const metadata = {
+  // Lets Next.js turn the relative image path from app/opengraph-image.js
+  // into a full, correct link when the site is shared on WhatsApp/LinkedIn.
+  metadataBase: new URL(SITE_URL),
   title: "Navavia — Where Ideas Take Form",
   description: "Portfolio website for Navavia — Where Ideas Take Form.",
+  openGraph: {
+    title: "Navavia — Where Ideas Take Form",
+    description: "Portfolio website for Navavia — Where Ideas Take Form.",
+    siteName: "Navavia",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Navavia — Where Ideas Take Form",
+    description: "Portfolio website for Navavia — Where Ideas Take Form.",
+  },
 };
 
 export default function RootLayout({ children }) {

@@ -25,6 +25,7 @@ function Thumbnail({ src, alt, onClick }) {
     <img
       src={src}
       alt={alt}
+      loading="lazy"
       onClick={onClick}
       onError={() => setFailed(true)}
       className="aspect-video w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"

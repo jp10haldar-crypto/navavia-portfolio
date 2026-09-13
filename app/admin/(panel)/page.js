@@ -32,22 +32,23 @@ export default function AdminDashboardPage() {
   const [isSeeding, setIsSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
 
-  async function loadCounts() {
-    const [projectsResult, reviewsResult, enquiriesResult] = await Promise.all([
+  function loadCounts() {
+    return Promise.all([
       getAllProjects(),
       getAllReviews(),
       getAllEnquiries(),
-    ]);
-    setProjectCount(projectsResult.success ? projectsResult.data.length : null);
-    setReviewCount(reviewsResult.success ? reviewsResult.data.length : null);
+    ]).then(([projectsResult, reviewsResult, enquiriesResult]) => {
+      setProjectCount(projectsResult.success ? projectsResult.data.length : null);
+      setReviewCount(reviewsResult.success ? reviewsResult.data.length : null);
 
-    if (enquiriesResult.success) {
-      setEnquiryCount(enquiriesResult.data.length);
-      setNewEnquiryCount(
-        enquiriesResult.data.filter((enquiry) => enquiry.status === "New").length
-      );
-      setRecentEnquiries(enquiriesResult.data.slice(0, 5));
-    }
+      if (enquiriesResult.success) {
+        setEnquiryCount(enquiriesResult.data.length);
+        setNewEnquiryCount(
+          enquiriesResult.data.filter((enquiry) => enquiry.status === "New").length
+        );
+        setRecentEnquiries(enquiriesResult.data.slice(0, 5));
+      }
+    });
   }
 
   useEffect(() => {

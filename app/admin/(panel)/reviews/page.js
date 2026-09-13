@@ -15,13 +15,14 @@ export default function AdminReviewsPage() {
   const [loadError, setLoadError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
-  async function loadReviews() {
-    const result = await getAllReviews();
-    if (result.success) {
-      setReviews(result.data);
-    } else {
-      setLoadError(result.message);
-    }
+  function loadReviews() {
+    return getAllReviews().then((result) => {
+      if (result.success) {
+        setReviews(result.data);
+      } else {
+        setLoadError(result.message);
+      }
+    });
   }
 
   useEffect(() => {

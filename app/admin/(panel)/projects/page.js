@@ -17,13 +17,14 @@ export default function AdminProjectsPage() {
   const [loadError, setLoadError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
-  async function loadProjects() {
-    const result = await getAllProjects();
-    if (result.success) {
-      setProjects(result.data);
-    } else {
-      setLoadError(result.message);
-    }
+  function loadProjects() {
+    return getAllProjects().then((result) => {
+      if (result.success) {
+        setProjects(result.data);
+      } else {
+        setLoadError(result.message);
+      }
+    });
   }
 
   useEffect(() => {

@@ -26,6 +26,7 @@ export default function ProjectCard({ project }) {
           <img
             src={thumbnail}
             alt={project.title}
+            loading="lazy"
             onError={() => setImageFailed(true)}
             className="h-full w-full object-cover"
           />

@@ -22,13 +22,14 @@ export default function AdminBlogPage() {
   const [loadError, setLoadError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
-  async function loadPosts() {
-    const result = await getAllBlogPosts();
-    if (result.success) {
-      setPosts(result.data);
-    } else {
-      setLoadError(result.message);
-    }
+  function loadPosts() {
+    return getAllBlogPosts().then((result) => {
+      if (result.success) {
+        setPosts(result.data);
+      } else {
+        setLoadError(result.message);
+      }
+    });
   }
 
   useEffect(() => {

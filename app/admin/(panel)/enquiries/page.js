@@ -42,13 +42,14 @@ export default function AdminEnquiriesPage() {
   const [savedId, setSavedId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  async function loadEnquiries() {
-    const result = await getAllEnquiries();
-    if (result.success) {
-      setEnquiries(result.data);
-    } else {
-      setLoadError(result.message);
-    }
+  function loadEnquiries() {
+    return getAllEnquiries().then((result) => {
+      if (result.success) {
+        setEnquiries(result.data);
+      } else {
+        setLoadError(result.message);
+      }
+    });
   }
 
   useEffect(() => {
