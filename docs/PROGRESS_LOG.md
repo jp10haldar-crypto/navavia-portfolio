@@ -777,6 +777,45 @@ console — worth a quick look there yourself after this deploys.
 **What you should see:** See the message given alongside this update for
 what to check on the live site.
 
+### 2026-09-13 — Fixed: homepage stuck on "Loading our work..." forever
+**What was reported:** on the live site, the homepage sometimes never
+finishes loading — it's stuck showing "Loading our work..." with no way
+out.
+**What was found:** the homepage starts three database reads together
+(projects, reviews, homepage videos) and waits for all three before
+showing anything. Firebase's own library has no built-in "give up after a
+while" — if even one of those three reads never gets an answer back from
+Google's servers (a network hiccup, a connection that can't complete its
+handshake, anything), it just waits forever, with no error and nothing
+telling the page to stop waiting. Since the page waits for all three
+together, one silently-stuck read was enough to freeze the whole homepage
+permanently. This wasn't unique to the homepage — every page that reads
+the database (admin pages included) had the same gap; the homepage just
+happened to be where it was noticed.
+**The fix:** every single database read and write in the entire app now
+gives up after 15 seconds if Firestore hasn't answered, and reports a
+clear "took too long, please try again" message instead of waiting
+forever. This lives in one place (`lib/firestore.js`), so every page that
+was already built to show a loading message and then either real content
+or an error message automatically benefits — no other files needed to
+change.
+**Proved, not assumed:** tested the exact timeout logic against a promise
+that deliberately never resolves (simulating the exact hang this bug
+caused) — it was correctly given up on at exactly the configured time,
+with a clean, catchable error, every time. Also rebuilt and re-linted the
+whole app afterward — both clean — and re-tested the homepage and several
+other pages to confirm normal, fast-loading behavior was unaffected when
+the database responds normally (as it does almost all the time — this
+fix only matters for the rare case when it doesn't).
+**Files changed:**
+- `lib/firestore.js` — added `runWithTimeout()`, and routed every one of
+  its ~30 exported functions through it.
+- `docs/DECISIONS.md` — logged why, and the proof that it works.
+**What you should see:** if this happens again on the live site, the page
+should now show a clear message within 15 seconds instead of loading
+forever — but this should be rare in the first place, since Firestore
+almost always answers in well under a second.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
