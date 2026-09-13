@@ -431,6 +431,48 @@ failing" entry above), not a new, separate bug.
 **What you should see:** See the message given alongside this update for
 how to confirm the video is showing.
 
+### 2026-09-13 — Homepage "How We Work" videos + closing contact section
+**What was built:** A new "How We Work" section on the homepage for
+general business videos (separate from the per-project walkthrough
+videos), fully manageable from a new admin page — and a closing
+"Ready to get started?" section at the very bottom of the homepage.
+Confirmed for real (not just by reading the code) that the new
+`homepageVideos` collection is still blocked until its rule is
+republished — same one-time step as every other collection so far.
+**Files created:**
+- `data/homepageVideos.js` — 3 starter draft videos ("What We Do",
+  "How We Work", "Why Choose Us"), unpublished, with the video link left
+  empty for you to fill in.
+- `components/HomepageVideos.js` — new. The public "How We Work" section:
+  first video large, the rest smaller in a row beneath (stacking on
+  mobile); hides itself completely if there are no published videos.
+- `components/ClosingCTA.js` — new. The "Ready to get started?" section,
+  on a visibly different background shade, with a large "Get in Touch"
+  button plus placeholder email and WhatsApp links — see the message
+  alongside this update for exactly which lines to edit with your real
+  details.
+- `components/admin/HomepageVideoForm.js` — the shared add/edit form:
+  title, description, YouTube link (same auto-extract + clear-error
+  behavior as the project form), display order, and a published toggle.
+- `app/admin/(panel)/homepage-videos/page.js`, `new/page.js`,
+  `[videoId]/edit/page.js` — the video list (drag a row to reorder,
+  Edit/Delete with confirmation) and add/edit pages, plus a one-time
+  "Import Starter Videos" button.
+**Files changed:**
+- `firestore.rules` — added the `homepageVideos` collection rule: anyone
+  can read them, only the signed-in admin can change them. **Needs to be
+  republished in the Firebase Console** before any of this works.
+- `lib/firestore.js` — added the 6 homepage-video functions (get all/get
+  one/add/update/delete/reorder) plus the one-time starter-video importer.
+- `app/(site)/page.js` — now also loads homepage videos, filters to
+  published-only, and places the new sections: Hero → Featured Work →
+  How We Work → What Our Clients Say → Ready to get started?
+- `app/admin/(panel)/layout.js` — added "Homepage Videos" to the sidebar.
+- `docs/DECISIONS.md` — logged the distinction between the two kinds of
+  video and where each is managed.
+**What you should see:** See the message given alongside this update for
+exactly what's on the homepage now and how to add your first video.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

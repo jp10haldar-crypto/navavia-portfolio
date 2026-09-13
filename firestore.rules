@@ -17,6 +17,9 @@
 //   enquiry, so the contact form works without requiring a login. But only
 //   the signed-in admin can READ, UPDATE, or DELETE enquiries — a visitor
 //   can send a message, but can never read anyone else's.
+// - Anyone can READ homepage videos (the "How We Work" business videos, so
+//   they show on the homepage), but only the signed-in admin can CREATE,
+//   UPDATE, or DELETE them.
 // - Anything not explicitly allowed above is denied — the last rule below
 //   blocks every other collection/action by default, as a safety net.
 
@@ -42,6 +45,11 @@ service cloud.firestore {
     match /enquiries/{enquiryId} {
       allow create: if true;
       allow read, update, delete: if request.auth != null;
+    }
+
+    match /homepageVideos/{videoId} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
 
     // Safety net: anything not explicitly allowed above is denied.
