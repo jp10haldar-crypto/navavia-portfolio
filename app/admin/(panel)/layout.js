@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/homepage-videos", label: "Homepage Videos" },
   { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminPanelLayout({ children }) {
@@ -61,10 +62,15 @@ export default function AdminPanelLayout({ children }) {
     router.push("/admin/login");
   }
 
+  // While this is anything other than a real signed-in user (still
+  // checking, or confirmed signed out), only this loading screen is ever
+  // shown — the real admin content below it never renders, so there's
+  // nothing to "flash" before the redirect to /admin/login happens.
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-muted">
-        Checking your sign-in status...
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 text-muted">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-muted border-t-accent" />
+        <p>Checking your sign-in status...</p>
       </div>
     );
   }

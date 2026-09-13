@@ -1,27 +1,26 @@
 // WHAT THIS FILE DOES: The footer shown at the bottom of every public
 // page. It's added once in app/(site)/layout.js, so it automatically
 // appears on the homepage, /projects, and /reviews — but never inside the
-// admin area. It runs in the browser because it checks whether you're
-// currently signed in as admin, and only then shows a small "Admin Panel"
-// link — so there's a quiet way back in without typing the URL, but only
-// for someone who's actually signed in.
+// admin area. It shows a plain "Admin Login" link to /admin/login — never
+// automatically signed in, always requiring the real email and password on
+// that page — controlled by the "Show admin login link in footer" switch
+// on the admin Settings page (on by default). It runs in the browser
+// because it checks that switch in the real database.
 
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { onAuthStateChanged } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebase";
+import { getSiteSettings } from "@/lib/firestore";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [showAdminLoginLink, setShowAdminLoginLink] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (user) => {
-      setIsSignedIn(Boolean(user));
+    getSiteSettings().then((result) => {
+      setShowAdminLoginLink(result.data.showAdminLoginLink);
     });
-    return unsubscribe;
   }, []);
 
   return (
@@ -45,12 +44,12 @@ export default function Footer() {
           <a href="#" className="text-muted transition-colors hover:text-accent">
             Email
           </a>
-          {isSignedIn && (
+          {showAdminLoginLink && (
             <Link
-              href="/admin"
+              href="/admin/login"
               className="text-muted transition-colors hover:text-accent"
             >
-              Admin Panel
+              Admin Login
             </Link>
           )}
         </div>

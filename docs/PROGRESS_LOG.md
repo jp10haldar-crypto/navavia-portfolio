@@ -855,6 +855,32 @@ environment variable in Vercel's settings rather than a code problem.
 **Reminder:** this page is temporary. Delete the whole `app/debug` folder
 once the live-site problem is solved — see the on-page warning banner.
 
+### 2026-09-13 — Fixed: real security hole letting anyone become "signed in" without your password
+**What was reported:** on the live site, admin pages could apparently be opened without entering a password.
+**What was investigated (all three specific questions you asked):**
+- Is the protection wrapper applied to every page under /admin? **Yes.** All six admin pages (Dashboard, Enquiries, Projects, Reviews, Homepage Videos, Blog) plus the new Settings page all live inside `app/admin/(panel)/layout.js`, which checks Firebase before showing anything.
+- Does the protection only run in development? **No** — there is no dev-only code anywhere in the project; the exact same check runs everywhere.
+- Was it a stale signed-in session? **No, it was something more serious.**
+**What was actually found:** Firebase's "Email/Password" sign-in method, by default, allows *anyone* to create their own brand-new account through Firebase's public API — using nothing but your site's own public API key, which is already visible to anyone (it has to be, for the site to work in a browser at all). Proved this directly: created a real throwaway account with no admin approval and no password of yours, then deleted it. Your security rules only ever checked "is *someone* signed in?" — not "is this specifically the real admin" — so a stranger who self-registered this way could pass that check both on the admin login form and on every Firestore rule protecting real data. Also checked: anonymous sign-in (an even easier version of this same hole on some projects) — already correctly disabled here. Also checked the database for any sign of tampering while this was open — found none; only the known starter/seed data is present.
+**The fix, in two parts:**
+1. **A Firebase Console setting only you can change** (not a code file) — turning off self-signup so the only accounts that can ever exist are ones you create yourself in Authentication → Users. Exact steps are in the message alongside this update. You specifically asked not to hardcode one fixed email into the code, so you can keep adding/removing admin accounts freely from the Firebase Console — this setting is what makes that safe.
+2. **Code changes made now:**
+   - `app/admin/(panel)/layout.js` — the "checking sign-in" screen now shows a spinner (was already fully blocking admin content from ever flashing before a redirect — confirmed by reading exactly how its state works, not just assumed).
+   - `components/Footer.js` — the admin link no longer depends on already being signed in (previously it only appeared if you were already logged in, which defeated the point of a "login" link). It now always points straight to `/admin/login` — never anywhere that could sign someone in automatically — and its visibility is controlled by a new setting instead.
+   - `app/admin/(panel)/settings/page.js` (**new**) — a Settings page in the admin sidebar with an on/off switch: "Show admin login link in footer," defaulted to on, saved in Firestore so it takes effect for every visitor immediately.
+   - `lib/firestore.js` — added `getSiteSettings()` / `updateSiteSettings()`.
+   - `firestore.rules` — added a rule for the new `settings` collection (anyone can read it, only a signed-in admin can change it), plus a written note at the top of the file explaining the self-signup setting, for future reference.
+**Proof:**
+- Ran `npm run build` and `npm run lint` — both clean, `/admin/settings` appears as a normal new page.
+- Restarted the dev server and loaded every single admin page plus every public page — all load correctly with no new errors.
+- Directly tested the real live database: confirmed the new `settings` collection is correctly denied by the *current* (not-yet-republished) rules, and confirmed the footer's fallback correctly defaults to "show the link" in that case, so nothing about the footer ever breaks while rules are mid-update.
+- The core self-signup exploit was proven live (created and deleted a real unauthorized account) — re-verifying it's closed requires you to change the Console setting first (see next message), then I'll re-run that exact same test to confirm it now fails.
+**What you still need to do (see the full message for exact steps):** turn off self-signup in the Firebase Console, publish the updated `firestore.rules`, and check your Authentication → Users list once for any account you don't recognize.
+
+### 2026-09-13 — Homepage videos: clarified this needs your action, not a fix
+**What was asked:** add three draft homepage videos ("What We Do," "How We Work," "Why Choose Us") directly into the database, unpublished, with empty YouTube fields.
+**What was found:** this exact feature already exists — the admin Homepage Videos page has an "Import Starter Videos" button that creates precisely these three drafts. Deliberately did not create them by directly writing to the database from outside the app: doing that would have needed either admin credentials (which this process should never handle) or temporarily weakening the security rules being tightened in the same update — neither is acceptable while fixing a security issue. Confirmed in the code that the "How We Work" section on the homepage stays completely hidden while there are zero published videos, and shows correctly as soon as one is marked "Published" — see the full message for exactly how to add your first one.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

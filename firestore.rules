@@ -25,8 +25,23 @@
 //   makes "preview before publishing" safe: only you can see a draft, even
 //   if someone guessed its URL. Only the signed-in admin can CREATE,
 //   UPDATE, or DELETE any blog post, draft or published.
+// - Anyone can READ the site settings (a small on/off-switches document —
+//   currently just whether the "Admin Login" link shows in the public
+//   footer), but only the signed-in admin can change it.
 // - Anything not explicitly allowed above is denied — the last rule below
 //   blocks every other collection/action by default, as a safety net.
+//
+// IMPORTANT — these rules alone are not the whole security story. Every
+// "request.auth != null" check below means "anyone with a valid signed-in
+// Firebase account" — it trusts every account that exists, not just you.
+// That's exactly why it's essential that your Firebase project's
+// Authentication settings do NOT allow the public to create their own
+// accounts (self-signup). In the Firebase Console: Authentication →
+// Settings → "User actions" → make sure "Enable create (sign-up)" is
+// turned OFF. With that off, the only accounts that can ever exist are
+// ones you create yourself in Authentication → Users — so "anyone signed
+// in" correctly means "an account I created," and you can add or remove
+// admins freely from there without ever touching this file.
 
 rules_version = '2';
 
@@ -59,6 +74,15 @@ service cloud.firestore {
 
     match /blogPosts/{postId} {
       allow read: if resource.data.published == true || request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // On/off switches for the public site (currently just whether the
+    // "Admin Login" link shows in the footer). Anyone can read it — the
+    // public footer needs to check it — but only a signed-in admin can
+    // change it.
+    match /settings/{settingId} {
+      allow read: if true;
       allow write: if request.auth != null;
     }
 
