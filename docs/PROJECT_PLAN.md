@@ -63,7 +63,7 @@ presence, and possibly embedded posts, to build credibility and reach.
 **What you should see:** Social icons/links (e.g. in the footer) and any
 embedded social content on relevant pages.
 
-## Step 11 — Deploy to Vercel
+## Step 11 — Deploy to Vercel (DONE)
 **What it gives you:** The website becomes publicly available on the
 internet with a real, shareable link.
 **What you should see:** A live URL (e.g. something.vercel.app) that anyone

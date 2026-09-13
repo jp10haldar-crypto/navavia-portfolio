@@ -18,7 +18,14 @@ import { getPublishedBlogPosts, getAllProjects } from "@/lib/firestore";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-const STATIC_PAGES = ["", "/projects", "/reviews", "/contact", "/blog"];
+const STATIC_PAGES = [
+  "",
+  "/projects",
+  "/reviews",
+  "/blog",
+  "/services",
+  "/contact",
+];
 
 export default async function sitemap() {
   const staticPages = STATIC_PAGES.map((path) => ({

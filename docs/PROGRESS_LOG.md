@@ -740,11 +740,46 @@ that took down the whole deployment.
 successfully — see the message given alongside this update for what to
 check.
 
+### 2026-09-13 — Step 11 confirmed live; fixed broken "Services" link
+**What was built:** The site is now genuinely live on Vercel. A broken
+link was reported — the header's "Services" link led to a page that never
+existed. Every link on the entire site was checked (header, footer,
+homepage, every page, every component) before touching anything: exactly
+one was broken — that "Services" link. Everything else already pointed
+somewhere real.
+**Files created:**
+- `app/(site)/services/page.js` — the new "What We Build" page: three
+  service blocks (Websites, Mobile Applications, Complete Business
+  Systems), each explaining what's included, who it suits, and that every
+  one comes with a real admin panel so the client can run it themselves; a
+  5-step "How It Works" section (Enquiry → Discussion → Build → Handover →
+  Support); a "What Makes Us Different" section about the client owning
+  the finished product; and the same closing call-to-action as the
+  homepage. Real written content — no placeholder text, no prices, no
+  city/region mentioned. Has no database behind it at all, so there's
+  nothing on this page that can fail to load.
+- `app/(site)/services/opengraph-image.js` — a dedicated social-share
+  preview image for this page specifically. Discovered while testing that
+  the homepage's own preview image does NOT automatically cover other
+  pages (confirmed directly, not assumed) — see docs/DECISIONS.md.
+**Files changed:**
+- `app/sitemap.js` — added `/services`.
+- `docs/DECISIONS.md` — logged that this page is static content with no
+  data dependency, and the per-page nature of share-preview images.
+**Checked for browser console errors:** crawled every real page plus a
+genuinely nonexistent one directly through the running site — all returned
+the correct status code, and the server log stayed completely clean (no
+warnings, no errors) throughout. Being upfront about the limits of this:
+this reliably catches server-side rendering problems, but a handful of
+purely client-side issues (something that only goes wrong after a click,
+for instance) can only be caught by opening the browser's own DevTools
+console — worth a quick look there yourself after this deploys.
+**What you should see:** See the message given alongside this update for
+what to check on the live site.
+
 ## IN PROGRESS
 
-- Step 11: Deploy to Vercel — Part A (prep) is done and this build-
-  breaking bug is fixed; still waiting on you to complete Part B (the
-  actual deployment on Vercel).
+_Nothing in progress right now._
 
 ## NOT STARTED
 
