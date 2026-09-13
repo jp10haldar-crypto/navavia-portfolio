@@ -8,7 +8,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       router.push("/admin");
     } catch {
       setError("Incorrect email or password. Please try again.");

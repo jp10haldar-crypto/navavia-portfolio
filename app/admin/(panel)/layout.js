@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 import { getAllEnquiries } from "@/lib/firestore";
 
 const NAV_LINKS = [
@@ -34,7 +34,7 @@ export default function AdminPanelLayout({ children }) {
   const [newEnquiryCount, setNewEnquiryCount] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
       } else {
@@ -57,7 +57,7 @@ export default function AdminPanelLayout({ children }) {
   }, [user, pathname]);
 
   async function handleSignOut() {
-    await signOut(auth);
+    await signOut(getFirebaseAuth());
     router.push("/admin/login");
   }
 

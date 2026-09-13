@@ -697,10 +697,54 @@ the two admin pages that actually use it, exactly as intended.
 in the Vercel website yourself. See the message given alongside this
 update for the exact steps.
 
+### 2026-09-13 — Fixed: Vercel build failing with "auth/invalid-api-key" on the sitemap
+**What was wrong (confirmed by actually reproducing the crash locally, not
+just reading the code):** `lib/firebase.js` set up Firebase Authentication
+automatically the moment it was imported — even by files that only wanted
+the database. The sitemap only needs the database, but it imports
+`lib/firestore.js`, which imports `lib/firebase.js`, which was dragging in
+Authentication setup regardless. That setup includes some browser-only
+sign-in logic that has no business running on Vercel's build servers, and
+doing so anyway is what surfaced as the confusing "invalid API key" crash
+that took down the whole deployment.
+**Confirmed by testing, not assuming:**
+- Rebuilt locally with a genuinely invalid API key — after the fix, the
+  build succeeded (before the fix, this is what would have reproduced the
+  exact reported crash).
+- Rebuilt locally with a completely non-existent Firebase project — the
+  build still succeeded, and the sitemap correctly fell back to just its
+  5 fixed pages (homepage, projects, reviews, blog, contact) instead of
+  failing.
+- Checked `robots.txt` and every other page for the same problem: only
+  the sitemap and the blog pages ever touch the database on the server
+  side, so those were the only ones that could have been affected — all
+  now fixed by the same change, and all re-tested working.
+**Files changed:**
+- `lib/firebase.js` — the database (`db`) is still set up right away;
+  Authentication is now set up only the first time something actually
+  calls the new `getFirebaseAuth()` function. Reading the database can
+  never touch Authentication again. Also wrapped the initial Firebase
+  setup in a try/catch, so a broken key reports a clear error instead of
+  crashing the app that's importing it.
+- `app/admin/login/page.js`, `app/admin/(panel)/layout.js`,
+  `components/Footer.js` — updated to call `getFirebaseAuth()` instead of
+  importing an already-created `auth` value.
+- `app/sitemap.js` — added every individual project page (previously only
+  the "/projects" listing was included, not each project's own page — now
+  it matches how blog posts already worked). Added its own try/catch
+  around each database read, on top of `lib/firestore.js`'s own error
+  handling, as a second safety net.
+- `docs/DECISIONS.md` — logged why Authentication is lazy now, and the
+  test results that confirm it.
+**What you should see:** Push this and Vercel should rebuild
+successfully — see the message given alongside this update for what to
+check.
+
 ## IN PROGRESS
 
-- Step 11: Deploy to Vercel — Part A (prep) is done; Part B (the actual
-  deployment on Vercel) is next, and needs you to act.
+- Step 11: Deploy to Vercel — Part A (prep) is done and this build-
+  breaking bug is fixed; still waiting on you to complete Part B (the
+  actual deployment on Vercel).
 
 ## NOT STARTED
 

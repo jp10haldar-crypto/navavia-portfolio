@@ -11,14 +11,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { getFirebaseAuth } from "@/lib/firebase";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (user) => {
       setIsSignedIn(Boolean(user));
     });
     return unsubscribe;
