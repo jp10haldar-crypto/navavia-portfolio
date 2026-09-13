@@ -232,7 +232,7 @@ export default function ContactPage() {
             <p className="text-sm text-muted">LinkedIn</p>
             {/* PLACEHOLDER: replace href with the real LinkedIn page URL. */}
             <a href="#" className="font-medium text-accent hover:opacity-80">
-              linkedin.com/company/seller-backbone
+              linkedin.com/company/navavia
             </a>
           </div>
           <p className="text-sm text-muted">

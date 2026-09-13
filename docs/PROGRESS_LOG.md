@@ -15,12 +15,12 @@ simple homepage.
 - `app/layout.js` — the shared frame around every page
 - `app/page.js` — the homepage
 - `app/globals.css` — site-wide default styling
-- `components/Hero.js` — the centered "Seller Backbone — Portfolio" heading
+- `components/Hero.js` — the centered "Navavia — Portfolio" heading
 - `lib/utils.js` — placeholder for helper functions and future Firebase code
 - `data/projects.js` — temporary fake project data
 - `public/images/` — empty folder ready for screenshots/logo
 **What you should see in the browser:** Opening http://localhost:3000 shows
-a black screen with "Seller Backbone — Portfolio" in white text, centered.
+a black screen with "Navavia — Portfolio" in white text, centered.
 
 ### 2026-09-12 — Tracking system set up
 **What was built:** A `docs/` folder to track the plan, progress, and
@@ -46,9 +46,9 @@ commit titled "Initial setup: Next.js portfolio project with docs and
 tracking". The code is not yet on GitHub — that's a manual step (see the
 instructions given alongside this update).
 
-### 2026-09-12 — Step 2: Layout with header/footer and Seller Backbone branding
+### 2026-09-12 — Step 2: Layout with header/footer and Navavia branding
 **What was built:** A site-wide color palette (5 brand colors, defined once
-and reused everywhere), a sticky header with the Seller Backbone name, nav
+and reused everywhere), a sticky header with the Navavia name, nav
 links, and a mobile hamburger menu, a footer with description/contact
 placeholders/auto-updating copyright, and a redesigned homepage that sits
 between them with a headline, supporting text, and two buttons.
@@ -60,7 +60,7 @@ between them with a headline, supporting text, and two buttons.
 - `app/layout.js` — changed. Now wraps every page with Header above and Footer below automatically
 - `app/page.js` — comment updated to reflect the header/footer wrapping
 **What you should see in the browser:** Opening http://localhost:3000 now
-shows a header at the top ("Seller Backbone" + Home/Projects/Services/Contact
+shows a header at the top ("Navavia" + Home/Projects/Services/Contact
 links), a large headline in the middle with two buttons, and a footer at the
 bottom. On a narrow/mobile-width screen, the nav links collapse into a
 hamburger menu.
@@ -164,8 +164,8 @@ visitors cannot submit their own.
 this update for exactly what's on each page.
 
 ### 2026-09-12 — Step 6: Firebase connection + admin login
-**What was built:** The app is now genuinely connected to the real Seller
-Backbone Firebase project (confirmed by testing the key against Firebase's
+**What was built:** The app is now genuinely connected to the real Navavia
+Firebase project (confirmed by testing the key against Firebase's
 own servers — not just checking the text existed), plus a working admin
 login page and a protected admin page with a working Sign Out button.
 **Files created:**
@@ -472,6 +472,51 @@ republished — same one-time step as every other collection so far.
   video and where each is managed.
 **What you should see:** See the message given alongside this update for
 exactly what's on the homepage now and how to add your first video.
+
+### 2026-09-13 — Rebrand: Seller Backbone → Navavia
+**What was built:** Every visible (and not-so-visible) mention of the old
+business name, "Seller Backbone," was replaced with the new name,
+"Navavia," plus its new tagline, "Where Ideas Take Form." Before changing
+anything, the whole project was searched for every spelling/capitalization
+of the old name — 35 occurrences across 18 files — and that full list was
+reported before a single edit was made.
+**Files changed (brand name swapped):**
+- `components/Header.js` — logo text now "Navavia," with the tagline added
+  underneath in small muted text (hidden on mobile so the header doesn't
+  get crowded), and a clearly marked comment showing exactly where and how
+  to drop in a real logo image later.
+- `components/Footer.js` — name, new tagline line, and the copyright line.
+- `components/Hero.js` — the homepage headline area's supporting sentence.
+- `components/ClosingCTA.js`, `app/(site)/contact/page.js` — the LinkedIn
+  placeholder slug.
+- `app/layout.js` — browser tab title is now "Navavia — Where Ideas Take
+  Form"; the search-engine description updated to match.
+- `app/admin/login/page.js`, `app/admin/(panel)/layout.js` — the admin
+  login subtext and the admin sidebar heading (now "Navavia Admin").
+- `lib/firebase.js`, `app/globals.css`, `data/homepageVideos.js` — code
+  comments.
+- `data/reviews.js` — the dummy testimonial text.
+- `README.md`, `docs/PROJECT_PLAN.md`, `docs/DECISIONS.md` — every mention.
+- `package.json` — project name changed to `navavia-portfolio`;
+  `package-lock.json` regenerated to match via `npm install`.
+**Deliberately left unchanged (confirmed):** the Firebase project id, the
+Cloudinary cloud name, the Cloudinary upload preset name, and the
+Cloudinary folder name where images already live — all four still say
+"seller-backbone" internally, exactly as instructed, since renaming any of
+them would have broken the live site rather than just changed a label.
+**One thing that needs a manual fix, not a code fix:** the dummy review
+from "Sarah Mitchell" was already copied into the real database by the
+one-time import, before this rename — so while its source text in
+`data/reviews.js` now says "Navavia," the live copy in Firestore still says
+"Seller Backbone" until you edit that one review yourself (Admin → Reviews
+→ Edit → Sarah Mitchell → update the review text → Save). Editing a source
+file never changes data that was already copied into the real database.
+**Confirmed working after the rename:** homepage, /projects, /projects/1,
+/reviews, /contact, /admin, and every admin page all loaded successfully
+with no errors, and a final project-wide search turned up zero remaining
+mentions of the old name outside the four protected identifiers above.
+**What you should see:** See the message given alongside this update for
+every place to check.
 
 ## IN PROGRESS
 

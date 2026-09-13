@@ -23,7 +23,7 @@ export const reviews = [
     clientRole: "Owner",
     clientCompany: "Travel Agency",
     reviewText:
-      "Working with Seller Backbone completely changed how we handle bookings. Before, we were juggling emails and spreadsheets just to keep track of who booked what. Now everything runs through one clean website, and our team can see live availability at a glance. Our customers constantly tell us how easy the booking process is, and we've seen a real increase in completed bookings since launch.",
+      "Working with Navavia completely changed how we handle bookings. Before, we were juggling emails and spreadsheets just to keep track of who booked what. Now everything runs through one clean website, and our team can see live availability at a glance. Our customers constantly tell us how easy the booking process is, and we've seen a real increase in completed bookings since launch.",
     rating: 5,
     clientPhoto: "/images/placeholders/client-1.svg",
     projectId: 1,

@@ -25,13 +25,22 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-white/10">
-      <div className="max-w-6xl mx-auto flex h-16 items-center justify-between px-6">
-        {/* LOGO SPOT: shown as plain bold text for now. When a logo image is
-            ready in public/images, swap the text below for an <Image> tag
-            pointing at it (e.g. /images/logo.png) — everything else in the
-            header stays the same. */}
-        <Link href="/" className="text-lg font-bold text-foreground">
-          Seller Backbone
+      <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-6 py-3">
+        {/* LOGO IMAGE SPOT — right here, replacing the <span> of text below.
+            When you have a logo file ready:
+            1. Save it into public/images/ (e.g. public/images/logo.png).
+               Recommended size: roughly 160×40px if it's a wide logo with
+               text baked in, or about 40×40px if it's a square icon/mark.
+            2. Add `import Image from "next/image";` near the top of THIS
+               file (components/Header.js), with the other imports.
+            3. Replace the <span>Navavia</span> line directly below with:
+               <Image src="/images/logo.png" alt="Navavia" width={40} height={40} />
+            Everything else on this page stays exactly the same. */}
+        <Link href="/" className="flex flex-col leading-tight">
+          <span className="text-lg font-bold text-foreground">Navavia</span>
+          <span className="hidden text-xs text-muted sm:block">
+            Where Ideas Take Form
+          </span>
         </Link>
 
         {/* Desktop navigation links — hidden on narrow screens, shown from

@@ -1,13 +1,13 @@
-# Seller Backbone — Portfolio
+# Navavia — Portfolio
 
-This is the portfolio website for **Seller Backbone**. It showcases the web
-and mobile applications Seller Backbone has built for clients, with a
-dedicated page per project that includes a live link, customer-facing
+This is the portfolio website for **Navavia** ("Where Ideas Take Form"). It
+showcases the web and mobile applications Navavia has built for clients,
+with a dedicated page per project that includes a live link, customer-facing
 screenshots, and admin-panel screenshots.
 
 The site also has a private admin panel (built later in the project) that
-lets Seller Backbone add, edit, and delete projects — and upload
-screenshots — without touching any code.
+lets Navavia add, edit, and delete projects — and upload screenshots —
+without touching any code.
 
 ## Project tracking
 

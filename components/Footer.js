@@ -28,7 +28,8 @@ export default function Footer() {
     <footer className="mt-auto border-t border-white/10 bg-card">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-10 text-center sm:flex-row sm:items-start sm:justify-between sm:text-left">
         <div>
-          <p className="font-bold text-foreground">Seller Backbone</p>
+          <p className="font-bold text-foreground">Navavia</p>
+          <p className="text-xs text-muted">Where Ideas Take Form</p>
           <p className="mt-2 max-w-xs text-sm text-muted">
             We build websites and mobile applications for growing businesses.
           </p>
@@ -56,7 +57,7 @@ export default function Footer() {
       </div>
 
       <p className="pb-6 text-center text-xs text-muted">
-        © {currentYear} Seller Backbone. All rights reserved.
+        © {currentYear} Navavia. All rights reserved.
       </p>
     </footer>
   );

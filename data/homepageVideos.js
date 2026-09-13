@@ -1,6 +1,6 @@
 // WHAT THIS FILE DOES: Starter "About Our Business" videos — these are
 // different from the per-project walkthrough videos. They're meant for
-// general videos about Seller Backbone itself (what you do, how you
+// general videos about Navavia itself (what you do, how you
 // work, why a client should pick you), shown in the homepage's "How We
 // Work" section. This file doesn't run by itself — it's only the source
 // for the admin panel's one-time "Import Starter Videos" button, which

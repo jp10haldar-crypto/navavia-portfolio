@@ -1,7 +1,7 @@
 /* WHAT THIS FILE DOES: Site-wide styling defaults that apply everywhere.
    It's loaded once, automatically, via app/layout.js.
 
-   The five colors below are the Seller Backbone brand colors, defined once
+   The five colors below are the Navavia brand colors, defined once
    here so every page/component can reuse them by name (e.g. "bg-background",
    "text-accent") instead of typing a hex code by hand each time. To change
    a color site-wide later, change it once here. */

@@ -1,4 +1,4 @@
-# Seller Backbone Portfolio — Build Plan
+# Navavia Portfolio — Build Plan
 
 This is the full plan for building the website, in plain English. Each step
 builds on the one before it. This file doesn't change often — it's the map.
@@ -9,8 +9,8 @@ For day-to-day status, see PROGRESS_LOG.md instead.
 **What you should see:** A homepage that runs locally.
 
 ## Step 2 — Layout, header, footer, branding (DONE)
-**What it gives you:** Every page shares the same top bar (with the Seller
-Backbone name/logo) and bottom bar, so the site feels like one connected site.
+**What it gives you:** Every page shares the same top bar (with the Navavia
+name/logo) and bottom bar, so the site feels like one connected site.
 **What you should see:** A header at the top and a footer at the bottom on
 every page, with consistent branding.
 
@@ -53,12 +53,12 @@ content that can help it get found on Google over time.
 
 ## Step 9 — Contact and enquiry form
 **What it gives you:** A way for visitors to reach out (e.g. potential
-clients asking about Seller Backbone's services).
+clients asking about Navavia's services).
 **What you should see:** A contact page with a form (name, email, message)
 that sends you the enquiry.
 
 ## Step 10 — Social media links and embeds
-**What it gives you:** Visible links to Seller Backbone's social media
+**What it gives you:** Visible links to Navavia's social media
 presence, and possibly embedded posts, to build credibility and reach.
 **What you should see:** Social icons/links (e.g. in the footer) and any
 embedded social content on relevant pages.

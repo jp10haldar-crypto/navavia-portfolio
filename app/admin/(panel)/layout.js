@@ -72,7 +72,7 @@ export default function AdminPanelLayout({ children }) {
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Mobile-only top bar with a hamburger toggle for the sidebar below */}
       <div className="flex items-center justify-between border-b border-white/10 bg-card px-6 py-4 md:hidden">
-        <span className="font-bold text-foreground">Admin Panel</span>
+        <span className="font-bold text-foreground">Navavia Admin</span>
         <button
           type="button"
           onClick={() => setIsMenuOpen((open) => !open)}
@@ -93,7 +93,7 @@ export default function AdminPanelLayout({ children }) {
         }`}
       >
         <p className="hidden font-bold text-foreground md:mb-8 md:block">
-          Admin Panel
+          Navavia Admin
         </p>
 
         <nav className="flex flex-1 flex-col gap-2">

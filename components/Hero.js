@@ -14,7 +14,7 @@ export default function Hero() {
       </h1>
 
       <p className="mt-6 max-w-xl text-base text-muted sm:text-lg">
-        Seller Backbone builds complete, ready-to-run websites and mobile
+        Navavia builds complete, ready-to-run websites and mobile
         apps for businesses — so you get a finished product, not an
         unfinished project that still needs a developer on call.
       </p>

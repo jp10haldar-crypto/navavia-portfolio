@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Seller Backbone — Portfolio",
-  description: "Portfolio website for Seller Backbone.",
+  title: "Navavia — Where Ideas Take Form",
+  description: "Portfolio website for Navavia — Where Ideas Take Form.",
 };
 
 export default function RootLayout({ children }) {

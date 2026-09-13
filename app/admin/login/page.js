@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     <div className="mx-auto flex max-w-md flex-col px-6 py-24">
       <h1 className="text-2xl font-bold text-foreground">Admin Login</h1>
       <p className="mt-2 text-sm text-muted">
-        This area is for Seller Backbone admin use only.
+        This area is for Navavia admin use only.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">

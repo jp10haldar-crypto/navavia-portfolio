@@ -10,7 +10,7 @@ built this way."
 - **Styling:** Tailwind CSS.
 - **Database + admin login:** Firebase (to be connected in Step 5).
 - **Hosting:** Vercel (to be set up in Step 8).
-- **Brand name:** "Seller Backbone" — used across the homepage, header, and browser tab title.
+- **Brand name:** "Navavia" (tagline: "Where Ideas Take Form") — used across the homepage, header, and browser tab title.
 - **Each project page shows:** a live link to the project, customer-facing screenshots, and admin-panel screenshots — all three, clearly separated.
 - **Code style:** one function/component per file, with a plain-English comment at the top of every file explaining what it does and when it runs.
 - **2026-09-12 — Project walkthrough videos:** hosted on YouTube as unlisted videos and embedded on the project detail pages, not uploaded directly to the site.
@@ -25,3 +25,4 @@ built this way."
 - **2026-09-13 — Contact form spam protection is client-side only (localStorage), not a server-side limit.** The same browser can't submit more than 3 enquiries per hour — enforced by checking timestamps saved in that browser's own storage, not on Firebase's side. This is a deterrent against casual repeat submissions, not a hard security guarantee — someone could clear their browser data or use a different browser/device to get around it. Revisit if spam becomes a real problem (e.g. with a server-side check, or a CAPTCHA).
 - **2026-09-13 — Enquiry status workflow:** New → Contacted → In Discussion → Won / Lost, set manually by the admin from the enquiries dashboard. Every new enquiry starts as "New" automatically; nothing else changes its status without the admin doing so.
 - **2026-09-13 — Two separate kinds of video, two separate places:** per-project walkthrough videos (`youtubeId` on a project) live on that project's own detail page; general "About Our Business" videos (the `homepageVideos` collection) live in the homepage's "How We Work" section. They're unrelated and managed in different parts of the admin panel on purpose, since they serve different audiences (someone looking at one specific project vs. a first-time visitor).
+- **2026-09-13 — Business renamed from Seller Backbone to Navavia**, tagline "Where Ideas Take Form." Every visible mention of the old name across the site, admin panel, and docs was updated. Internal service identifiers (the Firebase project id, the Cloudinary cloud name, the Cloudinary upload preset name, and the Cloudinary folder where images already live) were deliberately left unchanged — renaming any of those would have broken the live site rather than just changed a label.
