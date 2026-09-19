@@ -976,6 +976,23 @@ once the live-site problem is solved — see the on-page warning banner.
 **Files changed:** `next.config.mjs` (new), `components/BlogPostView.js`, `components/BlogPostCard.js`, `app/(site)/blog/[slug]/page.js`, `lib/firestore.js` (settings caching).
 **Proof:** rebuilt and re-linted repeatedly through this work — always clean. Restarted the dev server and crawled every route with no errors. Every fix above was proven with a real, live test (not assumed) — including deliberately reproducing the exploit chain against the real database, then cleaning it up completely.
 
+### 2026-09-19 — Fixed: blog posts broken (500 error) by the sanitization fix
+**What was reported:** right after the security audit's sanitization fix, every blog post started showing "Page could not load, server error" (a real 500), confirmed in the browser console.
+
+**What was checked, and the result for each:**
+1. **The real underlying error, not just "500":** could not reproduce the crash on this computer at all — ran a genuine production build and started it exactly the way the live server runs it (not the quick dev mode), twice, and both blog posts loaded correctly both times, with nothing unusual in the server's own output. This points strongly at something specific to Vercel's live servers rather than the code being wrong in every environment.
+2. **Is `isomorphic-dompurify` actually safe to use on the server?** This was almost certainly the real cause. That library builds a full simulated web page in the background to do its cleaning, even when running on the server — and Vercel's live servers run each page in a smaller, more restricted environment than a full local install. Something that simulated page needed most likely wasn't available there.
+3. **The JSON-LD escaping change:** checked closely — it's simple text find-and-replace with no way to fail or crash. Not the cause.
+4. **Old post vs. new post:** both failed identically live, and both succeeded identically once tested locally — confirming this was a page-code issue affecting every single post, not something specific to one post's content.
+
+**The fix — kept the protection, replaced the risky part:** swapped `isomorphic-dompurify` for `sanitize-html`, a library that does the exact same cleaning job but never needs to build a real or simulated web page at all, in any environment — removing the whole category of risk rather than guessing at one specific cause. Built the list of allowed formatting by reading exactly what the admin's rich-text editor can actually produce, so nothing legitimate gets stripped.
+
+**Proof the fix works, and that protection wasn't silently lost:**
+- Both blog posts now load correctly in a real production build, run the same way Vercel runs it.
+- Directly tested the sanitizer against four real attack payloads (a script tag, an `onerror` image, a `javascript:` link, and an iframe) — **all four were neutralized** — run right alongside a block of real formatted content (headings, bold, links, lists, a quote), which came through **completely untouched**.
+
+**Files changed:** `lib/sanitizeBlogContent.js` (new), `components/BlogPostView.js`, `package.json`/`package-lock.json` (swapped the dependency).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

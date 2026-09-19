@@ -6,10 +6,10 @@
 // buttons and show a "draft preview" banner instead) as props rather than
 // figuring those out itself.
 
-import DOMPurify from "isomorphic-dompurify";
 import ShareButtons from "@/components/ShareButtons";
 import BlogPostCard from "@/components/BlogPostCard";
 import ClosingCTA from "@/components/ClosingCTA";
+import { sanitizeBlogContent } from "@/lib/sanitizeBlogContent";
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -83,7 +83,7 @@ export default function BlogPostView({ post, relatedPosts, postUrl, isPreview })
             lists, links) untouched. */}
         <div
           className="blog-content mt-10"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(post.content) }}
         />
       </div>
 
