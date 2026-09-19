@@ -6,7 +6,12 @@ import Link from "next/link";
 
 function formatDate(dateString) {
   if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString(undefined, {
+  // Locale is fixed ("en-US"), not the visitor's own browser locale
+  // (passing undefined here used to do that) — otherwise the date the
+  // server renders and the date the browser re-renders can genuinely
+  // differ (e.g. "Sep 13, 2026" vs "13 Sept 2026"), which React reports
+  // as a hydration mismatch and has to silently re-render to fix.
+  return new Date(dateString).toLocaleDateString("en-US", {
     dateStyle: "medium",
   });
 }

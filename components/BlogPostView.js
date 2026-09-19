@@ -6,13 +6,17 @@
 // buttons and show a "draft preview" banner instead) as props rather than
 // figuring those out itself.
 
+import DOMPurify from "isomorphic-dompurify";
 import ShareButtons from "@/components/ShareButtons";
 import BlogPostCard from "@/components/BlogPostCard";
 import ClosingCTA from "@/components/ClosingCTA";
 
 function formatDate(dateString) {
   if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString(undefined, {
+  // Locale is fixed ("en-US"), not the visitor's own browser locale —
+  // see components/BlogPostCard.js for why (a real hydration-mismatch bug
+  // fixed at the same time as this one).
+  return new Date(dateString).toLocaleDateString("en-US", {
     dateStyle: "long",
   });
 }
@@ -67,9 +71,19 @@ export default function BlogPostView({ post, relatedPosts, postUrl, isPreview })
           </div>
         )}
 
+        {/* Run through a sanitizer before this ever reaches
+            dangerouslySetInnerHTML — this content is typed in the admin's
+            rich-text editor and only a signed-in account can save it, but
+            defense-in-depth matters here specifically: it's rendered as
+            raw HTML to every visitor who reads the post, so a compromised
+            or unauthorized account writing to this field is a direct path
+            to a real attack on real visitors, not just an admin-panel
+            problem. Strips anything dangerous (script tags, event-handler
+            attributes) while keeping normal formatting (headings, bold,
+            lists, links) untouched. */}
         <div
           className="blog-content mt-10"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
         />
       </div>
 

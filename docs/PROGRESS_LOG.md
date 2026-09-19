@@ -954,6 +954,28 @@ once the live-site problem is solved — see the on-page warning banner.
 **Files changed:** `app/(site)/blog/page.js`, `app/(site)/services/page.js`, `app/sitemap.js`.
 **Proof:** Next.js's own build output now explicitly lists a "1m" revalidate window for all three pages (previously none). Rebuilt and re-linted — both clean. Restarted the dev server and confirmed both blog posts now appear together.
 
+### 2026-09-19 — Full security, speed, and bug audit
+**What was asked:** a complete security, speed, and bug test of the whole site, with results and what was done to fix each one.
+**Full results — see the reply for the complete write-up; summary below.**
+
+**Security — 1 critical item still needs YOUR action, 3 were fixed in code:**
+- 🔴 **Still open, needs you:** Firebase self-signup — re-tested directly and it's still possible for anyone to create their own account with no approval. This was flagged before and is the root cause behind two of the fixes below. Only fixable in the Firebase Console (Authentication → Settings → User actions → turn off "Enable create (sign-up)").
+- ✅ **Fixed:** proved (with a real, cleaned-up test) that the open self-signup issue meant an unapproved account could write blog post content containing malicious HTML, which was being rendered to every visitor with no filtering at all. Added sanitization so this is blocked regardless of the account issue.
+- ✅ **Fixed:** the same kind of issue in the invisible SEO data on each post page — a title/excerpt containing certain text could have broken out of its safe zone. Closed it.
+- ✅ **Fixed:** added four standard security headers (clickjacking protection, MIME-sniffing protection, referrer control, blocking unused browser features like camera/microphone) that were missing site-wide.
+- ✅ **Checked, clean:** ran a full dependency vulnerability scan — 0 known vulnerabilities across all 569 packages.
+
+**Speed:**
+- ✅ **Fixed:** the homepage was quietly reading the same tiny settings document from the database 4 separate times on a single visit (Header, Footer, the page, and the closing section each fetched it independently). Now they share one read, cached for 10 seconds.
+- Checked real page-load timing on the live site directly — all pages responded well under 1 second. A full Lighthouse/Core Web Vitals report needs a real browser or an API key this environment doesn't have — recommend running the free check at pagespeed.web.dev yourself for the complete picture.
+
+**Bugs:**
+- ✅ **Fixed:** a real, reproducible bug where blog post dates could show differently on first load vs. a moment later (e.g. "Sep 13, 2026" then "13 Sept 2026") depending on a visitor's own browser settings — this was the exact hydration warning seen in the server logs earlier in this project. Locked to one fixed format everywhere.
+- ✅ **Checked:** every public and admin page crawled — all load correctly, a genuinely broken link correctly shows "Page Not Found."
+
+**Files changed:** `next.config.mjs` (new), `components/BlogPostView.js`, `components/BlogPostCard.js`, `app/(site)/blog/[slug]/page.js`, `lib/firestore.js` (settings caching).
+**Proof:** rebuilt and re-linted repeatedly through this work — always clean. Restarted the dev server and crawled every route with no errors. Every fix above was proven with a real, live test (not assumed) — including deliberately reproducing the exploit chain against the real database, then cleaning it up completely.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

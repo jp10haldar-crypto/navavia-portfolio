@@ -136,7 +136,13 @@ export default async function BlogPostPage({ params }) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        // Escapes "<" so a title/excerpt/author containing the literal
+        // text "</script>" can never prematurely close this tag and break
+        // out into the rest of the page — search engines still read this
+        // correctly as the same JSON either way.
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
       />
       <BlogPostView post={post} relatedPosts={relatedPosts} postUrl={postUrl} />
     </>
