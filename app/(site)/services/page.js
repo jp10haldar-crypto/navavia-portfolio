@@ -9,11 +9,20 @@
 // is fixed, not admin-editable (see docs/DECISIONS.md). If the admin turns
 // this whole page off in Settings, it behaves as if it doesn't exist at
 // all — the normal "Page Not Found" screen, same as any broken link.
+//
+// `revalidate = 60` means: served instantly from a cached copy that's
+// never more than 60 seconds old, refreshed quietly in the background.
+// Without it, a Server Component page like this one gets fully baked in
+// at build/deploy time and never updates again on its own — found and
+// fixed the same bug on the blog list page first (docs/DECISIONS.md); it
+// applied here too, for the same reason.
 
 import { notFound } from "next/navigation";
 import ClosingCTA from "@/components/ClosingCTA";
 import PageSections from "@/components/PageSections";
 import { getPageSections, getSiteSettings } from "@/lib/firestore";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "What We Build — Navavia",

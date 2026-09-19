@@ -16,12 +16,20 @@
 // until Step 11 — deploy). Once it is, set that environment variable to
 // the real address (e.g. https://navavia.com) so the links below point to
 // the live site instead of localhost.
+//
+// `revalidate = 60` means this list refreshes from the database at most
+// once a minute rather than being frozen from the last deployment forever
+// — same bug, same fix, as the blog list and Services pages
+// (docs/DECISIONS.md) — otherwise a newly published post or project would
+// never join the sitemap until the next deploy.
 
 import {
   getPublishedBlogPosts,
   getAllProjects,
   getSiteSettings,
 } from "@/lib/firestore";
+
+export const revalidate = 60;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 

@@ -942,6 +942,18 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Files changed:** `components/admin/ImageListUploader.js` (rewritten for multi-select, per-file progress, and captions), `components/admin/ProjectForm.js` (updated hint text), `components/ScreenshotGallery.js` (rewritten with next/prev navigation, captions, counter, swipe, keyboard, scroll-lock), `components/ProjectCard.js` (bug fix described above).
 
+### 2026-09-19 — Fixed: a newly published blog post never appeared on /blog
+**What was reported:** a new post was published, but only the old post showed on the live `/blog` page — even in incognito, even after waiting 15+ minutes.
+**What was checked, and the result for each:**
+1. **Does the new post exist in the database, with `published: true` and every field the page needs (slug, title, excerpt, publishedDate)?** Yes — checked directly against the live database. All fields present, nothing missing.
+2. **Does the page's query fetch ALL published posts, or is something capping it at 1?** Fetches all of them — there's no `limit()` anywhere in the query. Confirmed by running that exact query, unauthenticated, and getting both posts back.
+3. **Is the page statically generated, and if so, with what refresh interval?** **This was the actual cause.** The page had no refresh interval at all — it was fully static, baked in once at the last deployment, and never checks the database again on its own, ever, no matter how long you wait. Proved this directly: the live page's own response headers showed it had been serving the identical cached copy for **over 11 hours** without change.
+4. **Do the security rules block the query the way they once did for a single post?** No — the query already correctly includes `published: true` in the search itself (the fix from a similar past issue), and a real unauthenticated test confirmed the database allows it.
+**The fix:** added a 60-second refresh setting to the blog list page, so it's still served instantly from a cached copy, but that copy is never more than a minute old — Next.js quietly checks the database in the background and updates it automatically. **After publishing a new post, wait up to 1 minute and it will appear — no manual redeploy needed.**
+**Found and fixed the identical problem in two more places** before they caused their own separate bug reports: the **Services page** (an edit there wouldn't have shown up live either) and the **sitemap** (a new post or project would never have been added to it). Both now refresh the same way, every 60 seconds.
+**Files changed:** `app/(site)/blog/page.js`, `app/(site)/services/page.js`, `app/sitemap.js`.
+**Proof:** Next.js's own build output now explicitly lists a "1m" revalidate window for all three pages (previously none). Rebuilt and re-linted — both clean. Restarted the dev server and confirmed both blog posts now appear together.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

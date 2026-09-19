@@ -8,6 +8,16 @@
 // the whole point of a blog built for SEO. If the admin turns the whole
 // blog off in Settings, this behaves as if it doesn't exist at all — the
 // normal "Page Not Found" screen.
+//
+// `revalidate = 60` below means: this page is served instantly from a
+// cached copy, but that copy is never more than 60 seconds old — Next.js
+// quietly re-fetches from the database in the background at most once a
+// minute and swaps in the fresh version for the next visitor. Without
+// this, a Server Component page with no dynamic APIs gets fully baked in
+// at build/deploy time and NEVER updates again on its own — no matter how
+// long you wait — until the next deployment. That was the actual cause of
+// a newly published post not appearing here (confirmed directly: the live
+// page was serving an 11+ hour old cached copy). See docs/DECISIONS.md.
 
 import { notFound } from "next/navigation";
 import PageSections from "@/components/PageSections";
@@ -16,6 +26,8 @@ import {
   getPageSections,
   getSiteSettings,
 } from "@/lib/firestore";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Insights — Navavia",
