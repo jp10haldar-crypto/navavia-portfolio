@@ -2,15 +2,16 @@
 // loads every review from the real database, plus this page's admin-
 // editable sections, then renders them via PageSections — the reviews
 // feed and the closing "Want results like these?" call-to-action are both
-// admin-editable sections. While loading, it shows a simple loading
-// message; if the database can't be reached, it shows a clean message
-// instead of crashing or leaving a blank page.
+// admin-editable sections. While loading, it shows a skeleton screen
+// shaped like the real grid; if the database can't be reached, it shows a
+// clean message instead of crashing or leaving a blank page.
 
 "use client";
 
 import { useEffect, useState } from "react";
 import PageSections from "@/components/PageSections";
 import { getAllReviews, getPageSections } from "@/lib/firestore";
+import ReviewsPageSkeleton from "@/components/skeletons/ReviewsPageSkeleton";
 
 export default function ReviewsPage() {
   const [status, setStatus] = useState("loading"); // loading | error | ready
@@ -44,11 +45,7 @@ export default function ReviewsPage() {
 
   return (
     <div>
-      {status === "loading" && (
-        <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
-          Loading reviews...
-        </p>
-      )}
+      {status === "loading" && <ReviewsPageSkeleton />}
 
       {status === "error" && (
         <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">

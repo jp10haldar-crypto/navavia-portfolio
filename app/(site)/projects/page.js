@@ -4,15 +4,16 @@
 // projects grid, which is itself an admin-editable section (its heading/
 // subheading/position/visibility come from the admin Pages editor; the
 // actual projects always come from the Projects admin area). While
-// loading, it shows a simple loading message; if the database can't be
-// reached, it shows a clean message instead of crashing or leaving a blank
-// page.
+// loading, it shows a skeleton screen shaped like the real grid; if the
+// database can't be reached, it shows a clean message instead of crashing
+// or leaving a blank page.
 
 "use client";
 
 import { useEffect, useState } from "react";
 import PageSections from "@/components/PageSections";
 import { getAllProjects, getPageSections } from "@/lib/firestore";
+import ProjectsPageSkeleton from "@/components/skeletons/ProjectsPageSkeleton";
 
 export default function ProjectsPage() {
   const [status, setStatus] = useState("loading"); // loading | error | ready
@@ -46,11 +47,7 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      {status === "loading" && (
-        <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
-          Loading projects...
-        </p>
-      )}
+      {status === "loading" && <ProjectsPageSkeleton />}
       {status === "error" && (
         <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
           {errorMessage}

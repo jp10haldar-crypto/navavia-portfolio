@@ -6,7 +6,8 @@
 // editor (Featured Work, How We Work videos, Client Reviews, in whatever
 // order/visibility the admin chose), and a closing "Ready to get started?"
 // call-to-action just above the footer (also fixed). While that data is
-// loading it shows a simple loading message, and if the database can't be
+// loading it shows a skeleton screen shaped like the real page (see
+// components/skeletons/HomeSkeleton.js), and if the database can't be
 // reached it shows a clean message instead of crashing or leaving a blank
 // page. The Header and Footer wrap around it automatically via
 // app/(site)/layout.js, so they don't need to be added here.
@@ -18,6 +19,7 @@ import Link from "next/link";
 import Hero from "@/components/Hero";
 import ClosingCTA from "@/components/ClosingCTA";
 import PageSections from "@/components/PageSections";
+import HomeSkeleton from "@/components/skeletons/HomeSkeleton";
 import {
   getAllProjects,
   getAllReviews,
@@ -102,11 +104,7 @@ export default function Home() {
     <>
       <Hero />
 
-      {status === "loading" && (
-        <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
-          Loading our work...
-        </p>
-      )}
+      {status === "loading" && <HomeSkeleton />}
 
       {status === "error" && (
         <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">

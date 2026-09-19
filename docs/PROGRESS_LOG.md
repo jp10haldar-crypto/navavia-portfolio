@@ -993,6 +993,19 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Files changed:** `lib/sanitizeBlogContent.js` (new), `components/BlogPostView.js`, `package.json`/`package-lock.json` (swapped the dependency).
 
+### 2026-09-19 — Replaced every "Loading..." text with shape-matching skeleton screens
+**What was asked:** replace every plain "Loading..." message with grey skeleton shapes (rounded rectangles with a shimmer animation) matching the real content's layout, across the homepage, /projects, /reviews, /blog, and individual project/blog post pages.
+
+**What was built:**
+- `components/Skeleton.js` — the one reusable shape: a rounded rectangle in the site's existing card color, with a soft light band sweeping across it on a loop. Takes a width, height, and corner-roundness so it can become anything from a short text-line bar to a perfect circle.
+- A set of shape-specific skeletons in `components/skeletons/` — one matching each real card layout (project cards, review cards, blog post cards, video blocks) and one matching each full page (homepage, /projects, /reviews, one project, one blog post) — each reusing the exact same grid/wrapper classes as the real content, so nothing jumps when the real content swaps in.
+- Every "Loading our work...", "Loading projects...", "Loading reviews...", and "Loading project..." text message was replaced with its matching skeleton.
+- The two blog pages load their data on the server rather than in the browser, so they never had a text loading message to begin with — added Next.js's own `loading.js` file for each instead, which the framework shows automatically (via built-in streaming) whenever a real request needs a moment, with zero extra logic needed.
+
+**Proof:** rebuilt and re-linted — both clean, with no new routes added (the `loading.js` files are a framework convention, not real pages). Crawled every affected page — all load correctly, no errors in the server log. Directly confirmed the skeleton markup is present in the very first byte of HTML returned for the homepage, /projects, and /blog (49, 47, and 80 shimmer elements respectively, before any JavaScript runs) — proving there's no blank flash before it appears, and confirmed the shimmer animation itself compiled correctly into the site's CSS. Every skeleton reuses the real content's own responsive grid classes (1 column on mobile, 2 on tablet, 3 on desktop) rather than a separate set of rules, so mobile behavior matches the real layout by construction.
+
+**Files changed:** `app/globals.css` (shimmer animation), `components/Skeleton.js` (new), `components/skeletons/*` (9 new files), `app/(site)/page.js`, `app/(site)/projects/page.js`, `app/(site)/projects/[id]/page.js`, `app/(site)/reviews/page.js`, `app/(site)/blog/loading.js` (new), `app/(site)/blog/[slug]/loading.js` (new).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

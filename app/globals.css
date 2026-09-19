@@ -24,6 +24,16 @@
   --color-card: var(--card);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+}
+
+/* The sweeping highlight used by components/Skeleton.js — a soft light
+   band that slides from left to right on a loop, over a dark grey
+   rectangle, to read as "still loading" rather than "broken/empty." */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 body {
