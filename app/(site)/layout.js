@@ -4,9 +4,12 @@
 // outside this folder entirely, so it never gets this public Header or
 // Footer — this is what keeps the public site and the admin panel
 // completely separate. It runs for every public page load.
+// It also loads Vercel Web Analytics here (not in the root layout) so that
+// visits to the admin panel are never counted as site traffic.
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function SiteLayout({ children }) {
   return (
@@ -14,6 +17,7 @@ export default function SiteLayout({ children }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <Analytics />
     </>
   );
 }
