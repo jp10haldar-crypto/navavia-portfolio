@@ -1025,6 +1025,17 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Files changed:** `app/globals.css`, `app/layout.js`, `app/(site)/layout.js`, `app/not-found.js`, every public page under `app/(site)/`, `app/admin/blog-preview/[postId]/page.js` (so draft previews match the real post), nearly every file in `components/` and `components/skeletons/`, plus new `components/BuildStage.js`, `FormingText.js`, `SectionHeading.js`, `FilterChips.js`, and `LogoMark.js`.
 
+### 2026-10-18 — Redesign published live; fixed project cards cropping real screenshots
+**What was asked:** publish the redesign to the live site (navavia.in).
+
+**What happened:** pushed and deployed, then checked the live site with the real projects. That showed one real problem the sample data couldn't: project cards cropped real screenshots badly. The phone-app card showed only the top strip of a tall phone screenshot (mostly blank), and website screenshots were centred, cutting off the site's logo on the left.
+
+**Fix:** `components/ProjectCard.js` now measures each screenshot's shape. Wide screenshots are anchored to the top-left corner; tall (phone) screenshots are shown as up to three phones side by side that spread apart on hover. A project with no screenshots shows its name on blueprint paper.
+
+**Proof:** tested locally against the real live screenshots (temporarily, then removed), lint and production build passed, deployed, and confirmed on navavia.in that all four live projects display correctly.
+
+**Worth a look in the admin panel:** the project "Travel agency" (the second one) uses the same screenshots as "Travel Agency Booking Website" and still has the e-commerce description ("An online store for browsing products...") — it looks like a leftover starter project that was partly edited.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
