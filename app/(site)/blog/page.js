@@ -48,7 +48,7 @@ export default async function BlogPage() {
 
   if (!postsResult.success) {
     return (
-      <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
+      <p className="mx-auto max-w-7xl px-6 py-28 text-muted lg:px-10">
         {postsResult.message}
       </p>
     );

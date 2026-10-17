@@ -10,18 +10,18 @@ import BlogPostCardSkeleton from "@/components/skeletons/BlogPostCardSkeleton";
 
 export default function BlogLoading() {
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
-      <Skeleton width="8rem" height="2.25rem" />
-      <div className="mt-3">
-        <Skeleton width="18rem" height="1rem" />
+    <div className="mx-auto max-w-7xl px-6 pb-24 pt-16 sm:pt-24 lg:px-10">
+      <Skeleton width="14rem" height="4rem" />
+      <div className="mt-6">
+        <Skeleton width="24rem" height="1.25rem" />
       </div>
 
-      <div className="mt-8 flex gap-3">
-        <Skeleton width="3.5rem" height="2.5rem" rounded="9999px" />
-        <Skeleton width="5rem" height="2.5rem" rounded="9999px" />
+      <div className="mt-16 flex gap-2">
+        <Skeleton width="3.5rem" height="2.25rem" rounded="8px" />
+        <Skeleton width="5rem" height="2.25rem" rounded="8px" />
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
           <BlogPostCardSkeleton key={index} />
         ))}

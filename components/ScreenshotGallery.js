@@ -12,6 +12,9 @@
 // it's open, the page behind it can't be scrolled. Runs in the browser
 // because it reacts to clicks, key presses, and touch gestures.
 //
+// Each thumbnail is a real button, so the gallery also works from the
+// keyboard (Tab to a screenshot, Enter to enlarge it).
+//
 // Each screenshot is normally { url, caption } — older projects saved
 // before captions existed have plain URL strings instead; those are
 // treated as { url: thatString, caption: "" }, so nothing about them
@@ -34,22 +37,28 @@ function Thumbnail({ src, alt, onClick }) {
 
   if (!src || failed) {
     return (
-      <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-background text-sm text-muted">
-        Screenshot coming soon
+      <div className="blueprint-grid flex aspect-video w-full items-center justify-center rounded-[14px] text-sm text-muted ring-1 ring-white/10 [mask-image:none]">
+        <span className="rounded-md bg-background px-3 py-1">Screenshot coming soon</span>
       </div>
     );
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
+    <button
+      type="button"
       onClick={onClick}
-      onError={() => setFailed(true)}
-      className="aspect-video w-full cursor-pointer rounded-lg object-cover transition-opacity hover:opacity-90"
-    />
+      aria-label={`Enlarge: ${alt}`}
+      className="group block w-full overflow-hidden rounded-[14px] bg-card ring-1 ring-white/10 transition-shadow hover:ring-white/25"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onError={() => setFailed(true)}
+        className="aspect-video w-full cursor-zoom-in object-cover object-top transition-transform duration-700 [transition-timing-function:var(--ease-form)] group-hover:scale-[1.02]"
+      />
+    </button>
   );
 }
 
@@ -129,7 +138,7 @@ export default function ScreenshotGallery({ screenshots, altPrefix }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
         {images.map((image, index) => (
           <Thumbnail
             key={index}
@@ -142,19 +151,22 @@ export default function ScreenshotGallery({ screenshots, altPrefix }) {
 
       {isOpen && current && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 p-4 sm:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-label={altPrefix}
+          className="fixed inset-0 z-[70] flex flex-col items-center justify-center bg-background/95 p-4 backdrop-blur-md sm:p-6"
           onClick={() => setOpenIndex(null)}
         >
           <button
             type="button"
             onClick={() => setOpenIndex(null)}
             aria-label="Close"
-            className="absolute right-4 top-4 text-3xl text-white sm:right-6 sm:top-6"
+            className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-3xl leading-none text-white transition-colors hover:bg-white/20 sm:right-6 sm:top-6"
           >
             ×
           </button>
 
-          <p className="absolute top-4 left-1/2 -translate-x-1/2 text-sm text-white/70 sm:top-6">
+          <p className="absolute left-1/2 top-7 -translate-x-1/2 text-sm tabular-nums text-white/70 sm:top-9">
             {openIndex + 1} of {images.length}
           </p>
 
@@ -198,7 +210,7 @@ export default function ScreenshotGallery({ screenshots, altPrefix }) {
             <img
               src={current.url}
               alt={current.caption || altPrefix}
-              className="max-h-[75vh] max-w-full rounded-lg object-contain"
+              className="max-h-[75vh] max-w-full rounded-[12px] object-contain shadow-[0_40px_100px_-30px_rgba(0,0,0,0.9)]"
             />
             {current.caption && (
               <p className="max-w-xl px-4 text-center text-sm text-white/90">

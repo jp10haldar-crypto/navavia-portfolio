@@ -5,10 +5,12 @@
 // of this logic, not two that could drift apart. On success, the fields
 // are replaced with a short thank-you message, right where the form was.
 // Runs in the browser because it reacts to typing and the button click.
+// Each label is linked to its field, and error messages are announced
+// with the field they belong to, so the form works with screen readers.
 
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { addEnquiry } from "@/lib/firestore";
 import {
   isValidEmail,
@@ -27,7 +29,11 @@ const BUDGET_OPTIONS = [
 ];
 
 const INPUT_CLASSES =
-  "mt-1 w-full rounded-lg border border-white/10 bg-card px-4 py-3 text-foreground outline-none focus:border-accent";
+  "mt-2 w-full rounded-[10px] border border-white/10 bg-background/70 px-4 py-3 text-foreground outline-none transition-[border-color,box-shadow] placeholder:text-muted/60 hover:border-white/20 focus:border-accent focus:shadow-[0_0_0_3px_rgba(245,165,36,0.18)] aria-[invalid=true]:border-red-400/70";
+
+// Selects get their own arrow, since the browser's default one is hidden
+// to match the other fields.
+const SELECT_CLASSES = `${INPUT_CLASSES} appearance-none bg-[url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%238f9bc2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E")] bg-[length:18px] bg-[right_14px_center] bg-no-repeat pr-11`;
 
 const INITIAL_VALUES = {
   fullName: "",
@@ -107,9 +113,14 @@ export default function EnquiryForm() {
 
   if (isSent) {
     return (
-      <div className="rounded-xl border border-white/10 bg-card p-8 text-center">
-        <p className="text-xl font-bold text-foreground">
-          Thanks for getting in touch.
+      <div role="status" className="flex flex-col items-start py-6">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-background">
+          <svg viewBox="0 0 20 20" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 10.5l4 4 8-9" />
+          </svg>
+        </span>
+        <p className="font-display mt-6 text-[1.75rem] font-semibold leading-tight text-foreground">
+          Enquiry sent. Thanks for getting in touch.
         </p>
         <p className="mt-2 text-muted">We will reply within 24 hours.</p>
       </div>
@@ -117,114 +128,161 @@ export default function EnquiryForm() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <Field label="Full Name" error={errors.fullName}>
-        <input
-          type="text"
-          value={values.fullName}
-          onChange={(event) => updateField("fullName", event.target.value)}
-          className={INPUT_CLASSES}
-        />
+    <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2">
+      <Field label="Full name" error={errors.fullName}>
+        {(fieldProps) => (
+          <input
+            {...fieldProps}
+            type="text"
+            autoComplete="name"
+            value={values.fullName}
+            onChange={(event) => updateField("fullName", event.target.value)}
+            className={INPUT_CLASSES}
+          />
+        )}
       </Field>
 
       <Field label="Email" error={errors.email}>
-        <input
-          type="email"
-          value={values.email}
-          onChange={(event) => updateField("email", event.target.value)}
-          className={INPUT_CLASSES}
-        />
+        {(fieldProps) => (
+          <input
+            {...fieldProps}
+            type="email"
+            autoComplete="email"
+            value={values.email}
+            onChange={(event) => updateField("email", event.target.value)}
+            className={INPUT_CLASSES}
+          />
+        )}
       </Field>
 
-      <Field label="Phone Number" hint="Optional.">
-        <input
-          type="tel"
-          value={values.phone}
-          onChange={(event) => updateField("phone", event.target.value)}
-          className={INPUT_CLASSES}
-        />
+      <Field label="Phone number" hint="Optional.">
+        {(fieldProps) => (
+          <input
+            {...fieldProps}
+            type="tel"
+            autoComplete="tel"
+            value={values.phone}
+            onChange={(event) => updateField("phone", event.target.value)}
+            className={INPUT_CLASSES}
+          />
+        )}
       </Field>
 
       <Field label="Country" error={errors.country}>
-        <select
-          value={values.country}
-          onChange={(event) => updateField("country", event.target.value)}
-          className={INPUT_CLASSES}
-        >
-          {countries.map((country) => (
-            <option key={country} value={country}>
-              {country}
-            </option>
-          ))}
-        </select>
+        {(fieldProps) => (
+          <select
+            {...fieldProps}
+            value={values.country}
+            onChange={(event) => updateField("country", event.target.value)}
+            className={SELECT_CLASSES}
+          >
+            {countries.map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
+        )}
       </Field>
 
       <Field label="What do you need?" error={errors.needType}>
-        <select
-          value={values.needType}
-          onChange={(event) => updateField("needType", event.target.value)}
-          className={INPUT_CLASSES}
-        >
-          <option value="">Select an option</option>
-          {NEED_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        {(fieldProps) => (
+          <select
+            {...fieldProps}
+            value={values.needType}
+            onChange={(event) => updateField("needType", event.target.value)}
+            className={SELECT_CLASSES}
+          >
+            <option value="">Select an option</option>
+            {NEED_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        )}
       </Field>
 
-      <Field label="Budget Range" hint="Optional.">
-        <select
-          value={values.budgetRange}
-          onChange={(event) => updateField("budgetRange", event.target.value)}
-          className={INPUT_CLASSES}
-        >
-          <option value="">Select a range (optional)</option>
-          {BUDGET_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+      <Field label="Budget range" hint="Optional.">
+        {(fieldProps) => (
+          <select
+            {...fieldProps}
+            value={values.budgetRange}
+            onChange={(event) => updateField("budgetRange", event.target.value)}
+            className={SELECT_CLASSES}
+          >
+            <option value="">Select a range (optional)</option>
+            {BUDGET_OPTIONS.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        )}
       </Field>
 
       <Field
         label="Message"
         error={errors.message}
         hint="At least 20 characters."
+        className="sm:col-span-2"
       >
-        <textarea
-          value={values.message}
-          onChange={(event) => updateField("message", event.target.value)}
-          rows={5}
-          className={INPUT_CLASSES}
-        />
+        {(fieldProps) => (
+          <textarea
+            {...fieldProps}
+            value={values.message}
+            onChange={(event) => updateField("message", event.target.value)}
+            rows={5}
+            placeholder="What are you building, and who is it for?"
+            className={`${INPUT_CLASSES} resize-y`}
+          />
+        )}
       </Field>
 
-      {submitError && <p className="text-sm text-red-400">{submitError}</p>}
+      <div className="flex flex-col items-start gap-4 sm:col-span-2">
+        {submitError && (
+          <p role="alert" className="text-sm text-red-300">
+            {submitError}
+          </p>
+        )}
 
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={isSending}
-        className="mt-2 self-start rounded-full bg-accent px-6 py-3 font-semibold text-background transition-opacity hover:opacity-90 disabled:opacity-60"
-      >
-        {isSending ? "Sending..." : "Send Enquiry"}
-      </button>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSending}
+          className="btn-form"
+        >
+          {isSending ? "Sending..." : "Send enquiry"}
+        </button>
+      </div>
     </div>
   );
 }
 
-function Field({ label, hint, error, children }) {
+// One labelled form field. `children` is a function that receives the
+// props linking the field to its label and its hint/error message.
+function Field({ label, hint, error, className = "", children }) {
+  const id = useId();
+  const messageId = `${id}-message`;
+  const message = error || hint;
+
   return (
-    <div className="text-left">
-      <label className="text-sm text-muted">{label}</label>
-      {children}
-      {error ? (
-        <p className="mt-1 text-xs text-red-400">{error}</p>
-      ) : (
-        hint && <p className="mt-1 text-xs text-muted">{hint}</p>
+    <div className={`text-left ${className}`}>
+      <label htmlFor={id} className="text-sm font-medium text-foreground">
+        {label}
+      </label>
+      {children({
+        id,
+        "aria-invalid": error ? true : undefined,
+        "aria-describedby": message ? messageId : undefined,
+      })}
+      {message && (
+        <p
+          id={messageId}
+          className={`mt-1.5 text-[13px] ${error ? "text-red-300" : "text-muted"}`}
+        >
+          {message}
+        </p>
       )}
     </div>
   );

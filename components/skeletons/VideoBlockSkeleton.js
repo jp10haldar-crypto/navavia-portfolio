@@ -6,12 +6,5 @@
 import Skeleton from "@/components/Skeleton";
 
 export default function VideoBlockSkeleton() {
-  return (
-    <div>
-      <Skeleton width="100%" height="auto" className="aspect-video" />
-      <div className="mt-3">
-        <Skeleton width="60%" height="1.1rem" />
-      </div>
-    </div>
-  );
+  return <Skeleton width="100%" height="auto" rounded="14px" className="aspect-video" />;
 }

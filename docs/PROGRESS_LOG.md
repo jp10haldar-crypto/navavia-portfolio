@@ -1006,6 +1006,25 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Files changed:** `app/globals.css` (shimmer animation), `components/Skeleton.js` (new), `components/skeletons/*` (9 new files), `app/(site)/page.js`, `app/(site)/projects/page.js`, `app/(site)/projects/[id]/page.js`, `app/(site)/reviews/page.js`, `app/(site)/blog/loading.js` (new), `app/(site)/blog/[slug]/loading.js` (new).
 
+### 2026-10-18 — Full visual redesign of the public website
+**What was asked:** re-create the website so it looks top-notch in graphics, design, animation, and visuals — the impression of a site built by one of the best, most creative developers.
+
+**The idea behind it:** the brand line "Where Ideas Take Form", taken literally. Two colors carry it everywhere: blueprint blue lines are the *idea* (dashed outlines, sketches, measurement marks), and the brand amber is the *form* (solid, finished, clickable). Most things on the site start as line and end as form.
+
+**What was built:**
+- **New look for the whole public site:** a deep blueprint-navy background, two new typefaces (Bricolage Grotesque for headlines, Hanken Grotesk for text), a faint film grain, and blueprint grid paper behind page openings.
+- **Interactive homepage picture** (`components/BuildStage.js`): a made-up client's website, its admin panel, and its phone app. When the page opens it's drawn as a dashed blueprint sketch, fills in as a finished product, then an amber divider sweeps across to reveal the admin panel under the customer site. Visitors can drag the divider (or use arrow keys) to compare both sides — showing exactly what Navavia hands over.
+- **Headlines that "take form"** (`components/FormingText.js`): the homepage headline and every page's main title start as thin outlines and settle into heavy, solid type, word by word.
+- **Project cards** show the screenshot in a small browser window; hovering switches it from the customer view to the admin panel (when the project has admin screenshots).
+- **New header** (transparent at the top, frosted once you scroll, full-screen menu on phones) and **new footer** with a giant "Navavia" that takes form as it scrolls into view.
+- **Every section restyled:** uneven Featured Work grid, reviews set as quotes in magazine columns, "How It Works" as a connected numbered timeline, a redesigned enquiry form, project pages, blog list and posts, and a blueprint-style 404 page.
+- **Accessibility kept to a high bar:** form labels are now properly linked to their fields (they weren't before), error messages are announced, screenshots can be opened from the keyboard, visible focus outlines everywhere, and all animation is switched off for visitors who ask their device for reduced motion.
+- The admin panel's look is **unchanged** — the new colors only apply inside the public site.
+
+**Proof:** viewed every public page in a real browser at desktop and phone sizes (homepage, Services, Projects, a project page, Contact, a blog post, the 404 page), clicked the mobile menu, hovered project cards, and triggered the form's validation. Three real bugs were found this way and fixed before finishing: the phone menu was being squashed into the header bar, the footer wordmark showed stray lines inside its letters, and the headline animation had the same stray-line issue. Lint and a full production build both pass. The browser checks used the site's own starter data (temporarily, locally) because this computer has no Firebase keys — that temporary change was removed afterwards.
+
+**Files changed:** `app/globals.css`, `app/layout.js`, `app/(site)/layout.js`, `app/not-found.js`, every public page under `app/(site)/`, `app/admin/blog-preview/[postId]/page.js` (so draft previews match the real post), nearly every file in `components/` and `components/skeletons/`, plus new `components/BuildStage.js`, `FormingText.js`, `SectionHeading.js`, `FilterChips.js`, and `LogoMark.js`.
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

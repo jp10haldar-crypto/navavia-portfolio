@@ -5,8 +5,20 @@
 // NOT add the admin sidebar (that lives in app/admin/(panel)/layout.js).
 // This separation is what keeps the public site and the admin panel from
 // ever bleeding into each other.
+//
+// Bricolage Grotesque (headlines) and Hanken Grotesk (body text) are the
+// public site's typefaces — they're only switched on inside the
+// ".site-theme" wrapper (see app/globals.css), so the admin panel keeps
+// its own look. Bricolage is loaded with its extra "width" and "optical
+// size" axes because the headline "taking form" animation moves along
+// them, not just along weight.
 
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Bricolage_Grotesque,
+  Hanken_Grotesk,
+} from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,6 +28,17 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  axes: ["wdth", "opsz"],
+});
+
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
 });
 
@@ -44,7 +67,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} ${hanken.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>
     </html>

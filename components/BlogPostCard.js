@@ -18,51 +18,47 @@ function formatDate(dateString) {
 
 export default function BlogPostCard({ post }) {
   return (
-    <Link
-      href={`/blog/${post.slug}`}
-      className="group block overflow-hidden rounded-xl border border-white/10 bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent"
-    >
-      <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden bg-background">
+    <Link href={`/blog/${post.slug}`} className="group block">
+      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[14px] bg-card ring-1 ring-white/8 transition-[box-shadow] duration-500 group-hover:ring-white/20">
         {post.coverImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={post.coverImage}
             alt={post.title}
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-700 [transition-timing-function:var(--ease-form)] group-hover:scale-[1.03]"
           />
         ) : (
-          <span className="px-4 text-center text-sm font-medium text-muted">
-            {post.title}
-          </span>
-        )}
-      </div>
-
-      <div className="p-5">
-        <h3 className="text-lg font-semibold text-foreground">
-          {post.title}
-        </h3>
-        <p className="mt-2 text-sm text-muted">{post.excerpt}</p>
-
-        <div className="mt-4 flex items-center gap-3 text-xs text-muted">
-          <span>{formatDate(post.publishedDate)}</span>
-          <span>·</span>
-          <span>{post.readingTime} min read</span>
-        </div>
-
-        {post.tags?.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-background px-3 py-1 text-xs text-muted"
-              >
-                {tag}
-              </span>
-            ))}
+          // No cover image: the title set large on blueprint paper instead.
+          <div className="blueprint-grid absolute inset-0 flex items-end p-6 [mask-image:none]">
+            <span className="font-display line-clamp-3 text-[1.6rem] font-semibold leading-[1.05] text-foreground/85">
+              {post.title}
+            </span>
           </div>
         )}
       </div>
+
+      <div className="mt-5 flex items-center gap-4 text-sm text-muted">
+        <span>{formatDate(post.publishedDate)}</span>
+        {post.readingTime && <span>{post.readingTime} min read</span>}
+      </div>
+      <h3 className="font-display mt-2 text-[1.45rem] font-semibold leading-tight text-foreground">
+        <span className="link-draw">{post.title}</span>
+      </h3>
+      {post.excerpt && <p className="mt-2 line-clamp-3 text-[0.97rem] text-muted">{post.excerpt}</p>}
+
+      {post.tags?.length > 0 && (
+        <ul className="mt-4 flex flex-wrap gap-1.5">
+          {post.tags.map((tag) => (
+            <li
+              key={tag}
+              className="rounded-md px-2 py-0.5 text-[12.5px] text-muted ring-1 ring-white/10"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )}
     </Link>
   );
 }

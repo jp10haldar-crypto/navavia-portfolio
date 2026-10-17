@@ -9,20 +9,20 @@ import Skeleton from "@/components/Skeleton";
 
 export default function ReviewCardSkeleton() {
   return (
-    <div className="flex h-full flex-col rounded-xl border border-white/10 bg-card p-6">
-      <Skeleton width="6rem" height="1rem" />
-
-      <div className="mt-4 flex flex-1 flex-col gap-2">
-        <Skeleton width="100%" height="0.875rem" />
-        <Skeleton width="100%" height="0.875rem" />
-        <Skeleton width="60%" height="0.875rem" />
+    <div className="border-t border-white/10 pt-7">
+      <div className="flex justify-end">
+        <Skeleton width="5.5rem" height="1rem" />
       </div>
-
-      <div className="mt-6 flex items-center gap-3">
-        <Skeleton width="3rem" height="3rem" rounded="9999px" />
+      <div className="mt-4 flex flex-col gap-2.5">
+        <Skeleton width="100%" height="1rem" />
+        <Skeleton width="100%" height="1rem" />
+        <Skeleton width="65%" height="1rem" />
+      </div>
+      <div className="mt-7 flex items-center gap-3">
+        <Skeleton width="2.75rem" height="2.75rem" rounded="9999px" />
         <div className="flex flex-col gap-2">
-          <Skeleton width="6rem" height="0.875rem" />
-          <Skeleton width="4.5rem" height="0.7rem" />
+          <Skeleton width="7rem" height="0.9rem" />
+          <Skeleton width="5rem" height="0.75rem" />
         </div>
       </div>
     </div>

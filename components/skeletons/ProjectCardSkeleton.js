@@ -6,21 +6,25 @@
 
 import Skeleton from "@/components/Skeleton";
 
-export default function ProjectCardSkeleton() {
+export default function ProjectCardSkeleton({ imageClassName = "aspect-[16/10]" }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-card">
-      <Skeleton width="100%" height="auto" rounded="0" className="aspect-video" />
-      <div className="flex flex-col gap-3 p-5">
-        <Skeleton width="30%" height="0.7rem" rounded="9999px" />
-        <Skeleton width="70%" height="1.25rem" />
-        <div className="flex flex-col gap-2">
-          <Skeleton width="100%" height="0.875rem" />
-          <Skeleton width="85%" height="0.875rem" />
-        </div>
-        <div className="mt-1 flex gap-2">
-          <Skeleton width="3.5rem" height="1.5rem" rounded="9999px" />
-          <Skeleton width="4.5rem" height="1.5rem" rounded="9999px" />
-        </div>
+    <div>
+      <div className="overflow-hidden rounded-[14px] bg-card ring-1 ring-white/8">
+        <div className="h-8 border-b border-white/6" />
+        <Skeleton width="100%" height="auto" rounded="0" className={imageClassName} />
+      </div>
+      <div className="mt-5 flex items-start justify-between gap-6">
+        <Skeleton width="60%" height="1.5rem" />
+        <Skeleton width="4.5rem" height="0.875rem" />
+      </div>
+      <div className="mt-3 flex flex-col gap-2">
+        <Skeleton width="100%" height="0.875rem" />
+        <Skeleton width="80%" height="0.875rem" />
+      </div>
+      <div className="mt-4 flex gap-1.5">
+        <Skeleton width="3.5rem" height="1.4rem" rounded="6px" />
+        <Skeleton width="4.5rem" height="1.4rem" rounded="6px" />
+        <Skeleton width="4rem" height="1.4rem" rounded="6px" />
       </div>
     </div>
   );

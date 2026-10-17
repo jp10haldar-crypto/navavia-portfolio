@@ -1,10 +1,20 @@
 /* WHAT THIS FILE DOES: Site-wide styling defaults that apply everywhere.
    It's loaded once, automatically, via app/layout.js.
 
-   The five colors below are the Navavia brand colors, defined once
-   here so every page/component can reuse them by name (e.g. "bg-background",
-   "text-accent") instead of typing a hex code by hand each time. To change
-   a color site-wide later, change it once here. */
+   There are two sets of colors:
+   - The ":root" set is what the admin panel uses. It's deliberately left
+     exactly as it was, so restyling the public site never changes how the
+     admin panel looks.
+   - The ".site-theme" set re-defines the same color names for the PUBLIC
+     site only (the wrapper in app/(site)/layout.js). Because every
+     component uses names like "bg-card" or "text-accent" rather than hex
+     codes, the whole public site switches palette from this one place.
+
+   The public palette is built on one idea — "Where Ideas Take Form":
+   - "line" (blueprint blue) is the IDEA: dashed outlines, sketches,
+     measurement marks — things not built yet.
+   - "accent" (the brand amber) is the FORM: solid, finished, clickable.
+   Most things on the page start as line and end as form. */
 
 @import "tailwindcss";
 
@@ -14,6 +24,23 @@
   --muted: #a1a1a1; /* secondary/muted text */
   --accent: #f5a524; /* buttons, links, hover effects only */
   --card: #1a1a1a; /* background for cards/panels that sit on top of the page */
+  --line: #3a3a3a; /* outlines (the public site redefines this as blueprint blue) */
+}
+
+.site-theme {
+  --background: #0c1430; /* blueprint ink */
+  --foreground: #edf0f8; /* paper */
+  --muted: #8f9bc2; /* secondary text */
+  --accent: #f5a524; /* brand amber — the "form" */
+  --card: #131d40; /* raised surfaces */
+  --line: #4a6cc7; /* blueprint stroke — the "idea" */
+  --ease-form: cubic-bezier(0.2, 0.7, 0.1, 1);
+
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-hanken), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
 }
 
 @theme inline {
@@ -22,8 +49,10 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-card: var(--card);
+  --color-line: var(--line);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bricolage);
   --animate-shimmer: shimmer 1.8s ease-in-out infinite;
 }
 
@@ -40,6 +69,244 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ---- PUBLIC SITE ONLY (everything below is scoped to .site-theme) ---- */
+
+.site-theme ::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+.site-theme :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* A very faint film grain over the whole page, so large flat areas of
+   navy read as a surface rather than as a flat screen fill. */
+.site-theme::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Component classes live in the "components" layer so that Tailwind
+   utility classes (e.g. "leading-tight") written next to them still win. */
+@layer components {
+/* Headline typography — Bricolage at a large optical size, tightly set. */
+.site-theme .font-display {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.028em;
+  line-height: 1;
+}
+
+/* Blueprint grid paper, used behind the hero, the closing section, and
+   the admin-panel band on project pages. Faded out towards the edges so
+   it never ends in a hard line. */
+.blueprint-grid {
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--line) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--line) 22%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in oklab, var(--line) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--line) 9%, transparent) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* ---- Buttons ----
+   .btn-form is the finished, solid action (amber). .btn-idea is the
+   secondary action, drawn as a dashed blueprint outline that snaps solid
+   on hover — the same "idea becomes form" move as the rest of the site. */
+.btn-form,
+.btn-idea {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: 10px;
+  font-weight: 650;
+  font-size: 0.95rem;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    transform 0.25s var(--ease-form),
+    box-shadow 0.25s var(--ease-form),
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+.btn-form {
+  background: var(--accent);
+  color: var(--background);
+}
+.btn-form:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -12px color-mix(in oklab, var(--accent) 70%, transparent);
+}
+.btn-form:active {
+  transform: translateY(0);
+}
+.btn-form:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+.btn-idea {
+  border: 1.5px dashed color-mix(in oklab, var(--line) 90%, white 10%);
+  color: var(--foreground);
+}
+.btn-idea:hover {
+  border-style: solid;
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* A text link with an underline that draws in from the left on hover. */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--ease-form), color 0.2s;
+  padding-bottom: 2px;
+}
+.link-draw:hover,
+.group:hover .link-draw {
+  background-size: 100% 1.5px;
+}
+}
+
+/* ---- "Taking form" headline animation (components/FormingText.js) ----
+   Each word starts as a hairline blueprint outline — thin, narrow, slightly
+   blurred — and settles into solid, heavy type, one word after another.
+   The outline is drawn UNDER an opaque fill (paint-order) so the letters'
+   internal overlapping shapes never show as stray lines. */
+.forming-word {
+  display: inline-block;
+  paint-order: stroke fill;
+  font-variation-settings: "wght" var(--form-wght, 680), "wdth" 100;
+  animation: take-form 1.4s var(--ease-form) both;
+  animation-delay: calc(var(--i, 0) * 75ms + var(--form-delay, 120ms));
+}
+
+@keyframes take-form {
+  0% {
+    opacity: 0;
+    color: var(--background);
+    -webkit-text-stroke: 2px var(--line);
+    font-variation-settings: "wght" 200, "wdth" 75;
+    filter: blur(6px);
+    transform: translateY(0.12em);
+  }
+  35% {
+    opacity: 1;
+    color: var(--background);
+    -webkit-text-stroke: 2px var(--line);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    color: currentColor;
+    -webkit-text-stroke: 2px transparent;
+    font-variation-settings: "wght" var(--form-wght, 680), "wdth" 100;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+/* The giant footer wordmark takes form as it scrolls into view, in
+   browsers that support scroll-driven animations. Elsewhere it simply
+   shows in its finished state. */
+.footer-wordmark {
+  --wordmark-fill: color-mix(in oklab, var(--foreground) 6%, var(--background));
+  font-variation-settings: "wght" 800, "wdth" 100;
+  color: var(--wordmark-fill);
+  -webkit-text-stroke: 2px color-mix(in oklab, var(--line) 70%, var(--background));
+  paint-order: stroke fill;
+}
+@supports (animation-timeline: view()) {
+  .footer-wordmark {
+    animation: wordmark-form linear both;
+    animation-timeline: view();
+    /* Finishes by the time ~3/4 of the word has scrolled in — it sits
+       at the very bottom of the page, partly cropped, so it can never
+       scroll in completely. */
+    animation-range: entry 0% entry 75%;
+  }
+}
+@keyframes wordmark-form {
+  from {
+    font-variation-settings: "wght" 200, "wdth" 75;
+    color: var(--background);
+    letter-spacing: 0.02em;
+  }
+  to {
+    font-variation-settings: "wght" 800, "wdth" 100;
+    color: var(--wordmark-fill);
+    letter-spacing: -0.04em;
+  }
+}
+
+/* ---- Hero build stage (components/BuildStage.js) ----
+   Every block in the mock product starts as a dashed blueprint outline and
+   fills in with its real color once the stage is marked data-formed. Each
+   block sets its own --fill and --d (delay) inline. */
+.bp {
+  background-color: transparent;
+  outline: 1px dashed color-mix(in oklab, var(--line) 85%, transparent);
+  outline-offset: -1px;
+  transition:
+    background-color 0.7s var(--ease-form),
+    outline-color 0.7s var(--ease-form),
+    opacity 0.5s var(--ease-form);
+  transition-delay: var(--d, 0ms);
+}
+.bp-text {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-form);
+  transition-delay: calc(var(--d, 0ms) + 250ms);
+}
+.stage[data-drawn] .bp-layer {
+  opacity: 1;
+}
+.bp-layer {
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-form);
+}
+.stage[data-formed] .bp {
+  background-color: var(--fill, transparent);
+  outline-color: transparent;
+}
+.stage[data-formed] .bp-text {
+  opacity: 1;
+}
+.stage[data-formed] .bp-annot {
+  opacity: 0.45;
+}
+.bp-annot {
+  transition: opacity 1.2s var(--ease-form);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forming-word,
+  .footer-wordmark {
+    animation: none !important;
+  }
+  .site-theme *,
+  .site-theme *::before,
+  .site-theme *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
 
 /* Styling for blog post content, which comes from the admin's rich text
@@ -91,4 +358,45 @@ body {
 }
 .blog-content strong {
   font-weight: 700;
+}
+
+/* The same blog content, as read on the public site: larger reading
+   size, display-face headings, and paragraphs in a softer tone than
+   headings so the hierarchy reads at a glance. */
+.site-theme .blog-content {
+  font-size: 1.125rem;
+  line-height: 1.8;
+}
+.site-theme .blog-content p,
+.site-theme .blog-content li {
+  color: color-mix(in oklab, var(--foreground) 86%, var(--muted));
+}
+.site-theme .blog-content h2,
+.site-theme .blog-content h3 {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--foreground);
+}
+.site-theme .blog-content h2 {
+  font-size: 1.9em;
+}
+.site-theme .blog-content ul li::marker {
+  color: var(--accent);
+}
+.site-theme .blog-content a {
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.site-theme .blog-content blockquote {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-style: normal;
+  font-size: 1.35em;
+  line-height: 1.4;
+  color: var(--foreground);
+  padding-left: 1.1em;
+}
+.site-theme .blog-content img {
+  border-radius: 14px;
 }

@@ -9,11 +9,13 @@
 
 import { useState } from "react";
 import ProjectCard from "@/components/ProjectCard";
+import SectionHeading from "@/components/SectionHeading";
+import FilterChips from "@/components/FilterChips";
 
 const FILTERS = [
   { label: "All", value: "All" },
   { label: "Websites", value: "Website" },
-  { label: "Mobile Apps", value: "Mobile App" },
+  { label: "Mobile apps", value: "Mobile App" },
 ];
 
 export default function ProjectsGridSection({ projects, heading, subheading }) {
@@ -25,36 +27,28 @@ export default function ProjectsGridSection({ projects, heading, subheading }) {
       : projects.filter((project) => project.category === activeFilter);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
-      {heading && (
-        <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-          {heading}
-        </h2>
-      )}
-      {subheading && <p className="mt-3 max-w-xl text-muted">{subheading}</p>}
+    <div className="mx-auto max-w-7xl px-6 pb-24 pt-4 lg:px-10">
+      <SectionHeading heading={heading} subheading={subheading} className="mb-10" />
 
-      <div className="mt-2 flex flex-wrap gap-3">
-        {FILTERS.map((filter) => (
-          <button
-            key={filter.value}
-            type="button"
-            onClick={() => setActiveFilter(filter.value)}
-            className={
-              activeFilter === filter.value
-                ? "rounded-full border border-accent px-4 py-2 text-sm font-medium text-accent"
-                : "rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-muted transition-colors hover:text-foreground"
-            }
-          >
-            {filter.label}
-          </button>
-        ))}
-      </div>
+      <FilterChips
+        label="Filter projects"
+        options={FILTERS}
+        active={activeFilter}
+        onChange={setActiveFilter}
+      />
 
-      <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
         {visibleProjects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>
+
+      {visibleProjects.length === 0 && (
+        <p className="mt-4 text-muted">
+          No projects in this category yet. Choose &ldquo;All&rdquo; to see
+          everything.
+        </p>
+      )}
     </div>
   );
 }

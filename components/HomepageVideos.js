@@ -9,6 +9,8 @@
 // subheading come from the admin Pages editor (with fallback defaults if
 // left blank).
 
+import SectionHeading from "@/components/SectionHeading";
+
 export default function HomepageVideos({
   videos,
   heading = "How We Work",
@@ -21,33 +23,36 @@ export default function HomepageVideos({
   const [featuredVideo, ...otherVideos] = videos;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-        {heading || "How We Work"}
-      </h2>
-      {subheading && <p className="mt-3 max-w-xl text-muted">{subheading}</p>}
+    <section className="relative border-y border-white/6 bg-card/40">
+      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-10">
+        <SectionHeading heading={heading || "How We Work"} subheading={subheading} />
 
-      <div className="mt-8">
-        <VideoBlock video={featuredVideo} />
+        <div className="mt-14">
+          <VideoBlock video={featuredVideo} large />
 
-        {otherVideos.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {otherVideos.map((video) => (
-              <VideoBlock key={video.id} video={video} />
-            ))}
-          </div>
-        )}
+          {otherVideos.length > 0 && (
+            <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+              {otherVideos.map((video) => (
+                <VideoBlock key={video.id} video={video} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
-function VideoBlock({ video }) {
+function VideoBlock({ video, large = false }) {
   return (
-    <div>
+    <div className={large ? "grid gap-8 lg:grid-cols-12 lg:items-end" : ""}>
       {/* This wrapper keeps the video at a 16:9 shape at any screen width,
           so it resizes cleanly on mobile instead of overflowing. */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-card">
+      <div
+        className={`relative aspect-video w-full overflow-hidden rounded-[14px] bg-background ring-1 ring-white/10 ${
+          large ? "lg:col-span-9" : ""
+        }`}
+      >
         {video.youtubeId ? (
           <iframe
             src={`https://www.youtube.com/embed/${video.youtubeId}`}
@@ -57,15 +62,23 @@ function VideoBlock({ video }) {
             className="absolute inset-0 h-full w-full"
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
-            Video coming soon
+          <div className="blueprint-grid absolute inset-0 flex items-center justify-center text-sm text-muted [mask-image:none]">
+            <span className="rounded-md bg-background px-3 py-1.5">Video coming soon</span>
           </div>
         )}
       </div>
-      <p className="mt-3 font-semibold text-foreground">{video.title}</p>
-      {video.description && (
-        <p className="mt-1 text-sm text-muted">{video.description}</p>
-      )}
+      <div className={large ? "lg:col-span-3 lg:pb-2" : "mt-4"}>
+        <p
+          className={`font-display font-semibold leading-tight text-foreground ${
+            large ? "text-[1.75rem]" : "text-[1.25rem]"
+          }`}
+        >
+          {video.title}
+        </p>
+        {video.description && (
+          <p className="mt-2 text-[0.97rem] text-muted">{video.description}</p>
+        )}
+      </div>
     </div>
   );
 }

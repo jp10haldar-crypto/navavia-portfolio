@@ -16,7 +16,7 @@ export default function SocialLinksRow({ socialLinks, className = "" }) {
   }
 
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {activePlatforms.map((platform) => {
         const Icon = platform.icon;
         return (
@@ -27,7 +27,7 @@ export default function SocialLinksRow({ socialLinks, className = "" }) {
             rel="noopener noreferrer"
             aria-label={platform.label}
             title={platform.label}
-            className="text-muted transition-colors hover:text-accent"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] text-muted ring-1 ring-inset ring-white/10 transition-colors hover:text-accent hover:ring-accent/60"
           >
             <Icon size={18} />
           </a>

@@ -26,10 +26,11 @@ export default function ShareButtons({ url, title }) {
   }
 
   const linkClasses =
-    "rounded-full border border-white/10 px-4 py-2 text-sm text-muted transition-colors hover:text-foreground";
+    "rounded-lg px-3.5 py-2 text-sm text-muted ring-1 ring-inset ring-white/10 transition-colors hover:text-foreground hover:ring-white/25";
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="mr-2 text-sm text-muted">Share</span>
       <a
         href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
         target="_blank"
@@ -55,7 +56,7 @@ export default function ShareButtons({ url, title }) {
         WhatsApp
       </a>
       <button type="button" onClick={handleCopyLink} className={linkClasses}>
-        {isCopied ? "Copied!" : "Copy Link"}
+        {isCopied ? "Link copied" : "Copy link"}
       </button>
     </div>
   );

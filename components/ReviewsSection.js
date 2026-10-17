@@ -1,14 +1,20 @@
 // WHAT THIS FILE DOES: A reusable block — a heading, an optional
-// supporting line, and a grid of review cards. The same file is used on
-// the homepage, the full Reviews page, and project detail pages; each one
-// passes in its own heading, subheading, and list of reviews to show. If
-// the list passed in is empty, the whole section hides itself instead of
-// showing an empty heading with nothing underneath. Renders once on the
-// server — the cards inside handle their own photo fallback.
+// supporting line, and the client reviews themselves. The same file is
+// used on the homepage, the full Reviews page, and project detail pages;
+// each one passes in its own heading, subheading, and list of reviews to
+// show. If the list passed in is empty, the whole section hides itself
+// instead of showing an empty heading with nothing underneath. Reviews
+// flow into columns (like a magazine), so short and long quotes sit
+// together without leaving gaps. Renders once on the server — the reviews
+// inside handle their own photo fallback.
+//
+// `action` is an optional link shown beside the heading (the homepage uses
+// it for "Read all reviews").
 
 import ReviewCard from "@/components/ReviewCard";
+import SectionHeading from "@/components/SectionHeading";
 
-export default function ReviewsSection({ heading, subheading, reviews, limit }) {
+export default function ReviewsSection({ heading, subheading, reviews, limit, action }) {
   const visibleReviews =
     typeof limit === "number" ? reviews.slice(0, limit) : reviews;
 
@@ -17,15 +23,14 @@ export default function ReviewsSection({ heading, subheading, reviews, limit }) 
   }
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-        {heading}
-      </h2>
-      {subheading && <p className="mt-3 max-w-xl text-muted">{subheading}</p>}
+    <section className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-10">
+      <SectionHeading heading={heading} subheading={subheading} action={action} />
 
-      <div className="mt-8 grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-16 gap-x-12 sm:columns-2 lg:columns-3">
         {visibleReviews.map((review) => (
-          <ReviewCard key={review.id} review={review} />
+          <div key={review.id} className="mb-14 break-inside-avoid">
+            <ReviewCard review={review} />
+          </div>
         ))}
       </div>
     </section>

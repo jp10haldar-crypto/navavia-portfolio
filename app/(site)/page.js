@@ -4,8 +4,9 @@
 // database, then shows: the Hero (fixed, not admin-editable — see
 // docs/DECISIONS.md), whichever sections are set up in the admin Pages
 // editor (Featured Work, How We Work videos, Client Reviews, in whatever
-// order/visibility the admin chose), and a closing "Ready to get started?"
-// call-to-action just above the footer (also fixed). While that data is
+// order/visibility the admin chose — the reviews section carries a "Read
+// all reviews" link beside its heading), and a closing "Tell us what you
+// want to build" call-to-action just above the footer (also fixed). While that data is
 // loading it shows a skeleton screen shaped like the real page (see
 // components/skeletons/HomeSkeleton.js), and if the database can't be
 // reached it shows a clean message instead of crashing or leaving a blank
@@ -92,7 +93,6 @@ export default function Home() {
     };
   }, []);
 
-  const featuredReviews = reviews.filter((review) => review.featured);
   const visibleSections = sections
     .filter((section) => section.visible)
     .filter((section) => {
@@ -107,7 +107,7 @@ export default function Home() {
       {status === "loading" && <HomeSkeleton />}
 
       {status === "error" && (
-        <p className="mx-auto max-w-6xl px-6 py-16 text-center text-muted">
+        <p className="mx-auto max-w-7xl px-6 py-24 text-muted lg:px-10">
           {errorMessage}
         </p>
       )}
@@ -116,18 +116,18 @@ export default function Home() {
         <>
           <PageSections
             sections={visibleSections}
-            data={{ projects, reviews, videos, reviewsFilter: "featured" }}
+            data={{
+              projects,
+              reviews,
+              videos,
+              reviewsFilter: "featured",
+              reviewsAction: (
+                <Link href="/reviews" className="btn-idea">
+                  Read all reviews
+                </Link>
+              ),
+            }}
           />
-          {settings.homepageReviewsEnabled && featuredReviews.length > 0 && (
-            <div className="mx-auto -mt-8 max-w-6xl px-6 pb-16 text-center">
-              <Link
-                href="/reviews"
-                className="font-medium text-accent transition-opacity hover:opacity-80"
-              >
-                Read All Reviews →
-              </Link>
-            </div>
-          )}
           <ClosingCTA showEnquiryForm />
         </>
       )}

@@ -88,5 +88,11 @@ export default function BlogPostPreviewPage() {
     );
   }
 
-  return <BlogPostView post={post} relatedPosts={relatedPosts} isPreview />;
+  // Wrapped in the public site's theme so the preview looks exactly like
+  // the real post will.
+  return (
+    <div className="site-theme min-h-full">
+      <BlogPostView post={post} relatedPosts={relatedPosts} isPreview />
+    </div>
+  );
 }

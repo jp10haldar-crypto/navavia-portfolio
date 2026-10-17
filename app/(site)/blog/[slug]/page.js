@@ -79,25 +79,22 @@ export default async function BlogPostPage({ params }) {
     // database couldn't be reached) — say that honestly instead.
     if (!result.notFound) {
       return (
-        <div className="mx-auto max-w-xl px-6 py-24 text-center text-muted">
+        <div className="mx-auto max-w-7xl px-6 py-28 text-muted lg:px-10">
           {result.message}
         </div>
       );
     }
 
     return (
-      <div className="mx-auto max-w-xl px-6 py-24 text-center">
-        <h1 className="text-2xl font-bold text-foreground">
+      <div className="mx-auto max-w-7xl px-6 py-28 lg:px-10">
+        <h1 className="font-display text-[clamp(2.25rem,5vw,3.75rem)] font-semibold text-foreground">
           Post not found
         </h1>
-        <p className="mt-3 text-muted">
-          The post you&apos;re looking for doesn&apos;t exist or may have
-          been removed.
+        <p className="mt-4 max-w-lg text-lg text-muted">
+          This post doesn&apos;t exist or may have been removed. Browse the
+          latest articles instead.
         </p>
-        <Link
-          href="/blog"
-          className="mt-6 inline-block rounded-full border border-accent px-6 py-3 font-semibold text-accent transition-colors hover:bg-accent hover:text-background"
-        >
+        <Link href="/blog" className="btn-idea mt-8">
           Back to Insights
         </Link>
       </div>

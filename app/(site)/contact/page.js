@@ -43,53 +43,66 @@ export default function ContactPage() {
     <div>
       <PageSections sections={sections} pageTitleFromFirstSection />
 
-      <div className="mx-auto max-w-5xl px-6 pb-16">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_300px]">
-          <EnquiryForm />
+      <div className="mx-auto max-w-7xl px-6 pb-28 lg:px-10">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="rounded-[20px] bg-card p-6 ring-1 ring-white/10 sm:p-10 lg:col-span-8">
+            <EnquiryForm />
+          </div>
 
-          {hasAnyContactDetail && (
-            <div className="flex flex-col gap-4 rounded-xl border border-white/10 bg-card p-6">
-              {settings.businessEmail && (
-                <div>
-                  <p className="text-sm text-muted">Email</p>
-                  <a
-                    href={`mailto:${settings.businessEmail}`}
-                    className="font-medium text-foreground hover:text-accent"
-                  >
-                    {settings.businessEmail}
-                  </a>
-                </div>
-              )}
-              {settings.phoneNumber && (
-                <div>
-                  <p className="text-sm text-muted">Phone</p>
-                  <a
-                    href={buildTelLink(settings.phoneNumber)}
-                    className="font-medium text-foreground hover:text-accent"
-                  >
-                    {settings.phoneNumber}
-                  </a>
-                </div>
-              )}
-              {settings.whatsappNumber && (
-                <div>
-                  <p className="text-sm text-muted">WhatsApp</p>
-                  <a
-                    href={buildWhatsAppLink(settings.whatsappNumber)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-accent hover:opacity-80"
-                  >
-                    Message us on WhatsApp
-                  </a>
-                </div>
-              )}
-              <SocialLinksRow socialLinks={settings.socialLinks} className="mt-2" />
-              <p className="text-sm text-muted">
-                We work with clients worldwide.
+          <aside className="flex flex-col gap-7 lg:col-span-4 lg:pt-4">
+            <div>
+              <p className="font-display text-[1.6rem] font-semibold leading-tight text-foreground">
+                We reply within 24 hours.
+              </p>
+              <p className="mt-3 text-muted">
+                Tell us what you want to build and who it&apos;s for. We&apos;ll
+                come back with questions and next steps.
               </p>
             </div>
-          )}
+            {hasAnyContactDetail && (
+              <>
+                {settings.businessEmail && (
+                  <div>
+                    <p className="text-sm text-muted">Email</p>
+                    <a
+                      href={`mailto:${settings.businessEmail}`}
+                      className="link-draw mt-1 inline-block break-all text-lg text-foreground"
+                    >
+                      {settings.businessEmail}
+                    </a>
+                  </div>
+                )}
+                {settings.phoneNumber && (
+                  <div>
+                    <p className="text-sm text-muted">Phone</p>
+                    <a
+                      href={buildTelLink(settings.phoneNumber)}
+                      className="link-draw mt-1 inline-block text-lg text-foreground"
+                    >
+                      {settings.phoneNumber}
+                    </a>
+                  </div>
+                )}
+                {settings.whatsappNumber && (
+                  <div>
+                    <p className="text-sm text-muted">WhatsApp</p>
+                    <a
+                      href={buildWhatsAppLink(settings.whatsappNumber)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-draw mt-1 inline-block text-lg text-accent"
+                    >
+                      Message us on WhatsApp
+                    </a>
+                  </div>
+                )}
+                <SocialLinksRow socialLinks={settings.socialLinks} />
+              </>
+            )}
+            <p className="border-t border-white/10 pt-6 text-muted">
+              We work with clients worldwide.
+            </p>
+          </aside>
         </div>
       </div>
     </div>
