@@ -7,7 +7,16 @@
 // to the admin panel — the same "both sides" idea as the homepage's
 // headline picture. It runs in the browser (not just once on the server)
 // because it needs to detect when a screenshot image fails to load and
-// swap in a placeholder instead.
+// swap in a placeholder instead, and to measure each screenshot's shape.
+//
+// The picture adapts to the screenshot's shape:
+// - Wide screenshots (websites) fill the window, anchored to the top-left
+//   corner so the site's logo and headline are never cut off.
+// - Tall screenshots (phone apps) are shown as up to three phones side by
+//   side, which spread apart slightly on hover — a phone screen cropped
+//   into a wide box would only ever show its top strip.
+// Until the first screenshot has loaded, the project's category ("Mobile
+// App" or not) is used as the best guess for its shape.
 //
 // `imageClassName` lets a layout give the picture a different shape (the
 // homepage's Featured Work uses a taller, fixed height on wide screens).
@@ -15,26 +24,66 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 // Screenshots are normally { url, caption }; older projects saved before
 // captions existed have a plain URL string instead — this works with
 // either.
-function firstUrl(screenshots) {
-  const first = screenshots?.[0];
-  return typeof first === "string" ? first : first?.url;
+function screenshotUrls(screenshots) {
+  return (screenshots || [])
+    .map((item) => (typeof item === "string" ? item : item?.url))
+    .filter(Boolean);
 }
+
+// Where each phone sits, by how many are shown: `x` is the sideways shift
+// (as a fraction of one phone's width), `s` the scale. With three, the
+// first screenshot stands in front, in the middle.
+const PHONE_LAYOUTS = {
+  1: [{ x: 0, s: 1, front: true }],
+  2: [
+    { x: -0.56, s: 1, front: true },
+    { x: 0.56, s: 1, front: true },
+  ],
+  3: [
+    { x: 0, s: 1, front: true },
+    { x: -0.7, s: 0.86 },
+    { x: 0.7, s: 0.86 },
+  ],
+};
+const DEFAULT_PHONE_RATIO = 9 / 19.5;
 
 export default function ProjectCard({
   project,
   imageClassName = "aspect-[16/10]",
 }) {
-  const [imageFailed, setImageFailed] = useState(false);
+  const [brokenUrls, setBrokenUrls] = useState([]);
   const [adminFailed, setAdminFailed] = useState(false);
-  const thumbnail = firstUrl(project.customerScreenshots);
-  const adminThumbnail = firstUrl(project.adminScreenshots);
-  const showImage = thumbnail && !imageFailed;
+  // Width ÷ height of the first screenshot, once it has loaded.
+  const [shape, setShape] = useState(null);
+
+  const customerUrls = screenshotUrls(project.customerScreenshots).filter(
+    (url) => !brokenUrls.includes(url)
+  );
+  const thumbnail = customerUrls[0];
+  const adminThumbnail = screenshotUrls(project.adminScreenshots)[0];
+  const showImage = Boolean(thumbnail);
   const showAdmin = showImage && adminThumbnail && !adminFailed;
+  const isPhone = shape ? shape < 1 : project.category === "Mobile App";
+  const phoneRatio = shape && shape < 1 ? shape : DEFAULT_PHONE_RATIO;
+  const phoneShots = customerUrls.slice(0, 3);
+  const phoneLayout = PHONE_LAYOUTS[phoneShots.length] || [];
+
+  // Reads the first screenshot's real shape — both when it finishes
+  // loading and if it was already loaded (cached) before this ran.
+  const measure = useCallback((img) => {
+    if (img?.complete && img.naturalWidth) {
+      setShape(img.naturalWidth / img.naturalHeight);
+    }
+  }, []);
+
+  function markBroken(url) {
+    setBrokenUrls((current) => (current.includes(url) ? current : [...current, url]));
+  }
 
   return (
     <Link href={`/projects/${project.id}`} className="group block">
@@ -56,28 +105,68 @@ export default function ProjectCard({
         </div>
 
         <div className={`relative w-full overflow-hidden ${imageClassName}`}>
-          {showImage ? (
+          {showImage && isPhone && (
             <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={thumbnail}
-                alt={project.title}
-                loading="lazy"
-                onError={() => setImageFailed(true)}
-                className="absolute inset-0 h-full w-full object-cover object-top transition-transform duration-700 [transition-timing-function:var(--ease-form)] group-hover:scale-[1.03]"
+              <div
+                aria-hidden="true"
+                className="blueprint-grid absolute inset-0 [mask-image:none]"
               />
-              {showAdmin && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={adminThumbnail}
-                  alt=""
-                  loading="lazy"
-                  onError={() => setAdminFailed(true)}
-                  className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-[opacity,clip-path] duration-700 [clip-path:inset(0_0_0_100%)] [transition-timing-function:var(--ease-form)] group-hover:opacity-100 group-hover:[clip-path:inset(0_0_0_0)] group-focus-visible:opacity-100 group-focus-visible:[clip-path:inset(0_0_0_0)]"
-                />
-              )}
+              {phoneShots.map((url, index) => {
+                const position = phoneLayout[index];
+                const isFirst = index === 0;
+                return (
+                  <div
+                    key={url}
+                    className="absolute left-1/2 top-[10%] h-[98%] origin-top transition-transform duration-700 [transition-timing-function:var(--ease-form)] group-hover:[--spread:1.16]"
+                    style={{
+                      aspectRatio: phoneRatio,
+                      zIndex: position.front ? 2 : 1,
+                      transform: `translateX(calc(-50% + ${position.x} * var(--spread, 1) * 100%)) scale(${position.s})`,
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={isFirst ? project.title : ""}
+                      loading="lazy"
+                      ref={isFirst ? measure : undefined}
+                      onLoad={isFirst ? (event) => measure(event.currentTarget) : undefined}
+                      onError={() => markBroken(url)}
+                      className={`h-full w-full rounded-[16px] object-cover object-top shadow-[0_30px_60px_-20px_rgba(0,0,0,0.85)] ring-1 ring-white/15 transition-[filter] duration-700 ${
+                        position.front ? "" : "brightness-[0.65] group-hover:brightness-90"
+                      }`}
+                    />
+                  </div>
+                );
+              })}
             </>
-          ) : (
+          )}
+
+          {showImage && !isPhone && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={thumbnail}
+              alt={project.title}
+              loading="lazy"
+              ref={measure}
+              onLoad={(event) => measure(event.currentTarget)}
+              onError={() => markBroken(thumbnail)}
+              className="absolute inset-0 h-full w-full object-cover object-left-top transition-transform duration-700 [transition-timing-function:var(--ease-form)] group-hover:scale-[1.03]"
+            />
+          )}
+
+          {showAdmin && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={adminThumbnail}
+              alt=""
+              loading="lazy"
+              onError={() => setAdminFailed(true)}
+              className="absolute inset-0 z-10 h-full w-full bg-card object-cover object-left-top opacity-0 transition-[opacity,clip-path] duration-700 [clip-path:inset(0_0_0_100%)] [transition-timing-function:var(--ease-form)] group-hover:opacity-100 group-hover:[clip-path:inset(0_0_0_0)] group-focus-visible:opacity-100 group-focus-visible:[clip-path:inset(0_0_0_0)]"
+            />
+          )}
+
+          {!showImage && (
             // No screenshot yet: shown as an unbuilt blueprint, in keeping
             // with the rest of the site.
             <div className="blueprint-grid absolute inset-0 flex items-center justify-center [mask-image:none]">
