@@ -1048,6 +1048,13 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Still to do before ads go live:** create the Meta / Google Ads accounts and paste the IDs in; add a Privacy Policy page (expected by both ad platforms when tracking is used).
 
+### 2026-11-11 — Projects can be reordered in the admin panel
+**What was asked:** projects in the admin panel couldn't be moved; need to change their order.
+
+**What was built:** the admin Projects list now has an "Order" column — drag a row by its ⠿ handle, or use the ↑ / ↓ buttons (these work on a phone too). Each move saves straight away (all projects renumbered in one batch, so the order is never half-saved) and the same order is used on the homepage Featured Work and the /projects page. New projects are added at the end of the list. Projects saved before this keep their old order until the first move.
+
+**Proof:** lint and production build pass. Not clicked through against the live database from this computer (no Firebase keys here).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
