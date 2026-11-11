@@ -5,7 +5,9 @@
 // Footer — this is what keeps the public site and the admin panel
 // completely separate. It runs for every public page load.
 // It also loads Vercel Web Analytics here (not in the root layout) so that
-// visits to the admin panel are never counted as site traffic.
+// visits to the admin panel are never counted as site traffic. The ad
+// tracking (Meta Pixel / Google Ads — see components/AdTracking.js) sits
+// here for exactly the same reason.
 // The "site-theme" wrapper is what switches on the public site's own
 // colors and typefaces (see app/globals.css) — the admin panel never
 // sits inside it, so it keeps its own look.
@@ -13,6 +15,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
+import AdTracking from "@/components/AdTracking";
 
 export default function SiteLayout({ children }) {
   return (
@@ -21,6 +24,7 @@ export default function SiteLayout({ children }) {
       <main className="flex-1">{children}</main>
       <Footer />
       <Analytics />
+      <AdTracking />
     </div>
   );
 }

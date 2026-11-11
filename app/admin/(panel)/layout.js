@@ -26,6 +26,7 @@ const NAV_LINKS = [
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/pages", label: "Pages" },
   { href: "/admin/contact-social", label: "Contact & Social" },
+  { href: "/admin/ads-tracking", label: "Ads & Tracking" },
   { href: "/admin/settings", label: "Settings" },
 ];
 

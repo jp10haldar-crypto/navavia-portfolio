@@ -2,7 +2,9 @@
 // /admin/enquiries. Shows every enquiry from the public contact form,
 // newest first, as a list of cards (not a traditional table) so it reads
 // well on a phone. Clicking a card expands it to show the full message.
-// Changing the status dropdown saves immediately. Runs in the browser so
+// Changing the status dropdown saves immediately. Each card also shows
+// where that enquiry came from (Google Ads, Meta Ads, a website, Direct…),
+// with the campaign details in the expanded view. Runs in the browser so
 // it can load the live list and react to clicks.
 
 "use client";
@@ -13,6 +15,7 @@ import {
   updateEnquiryStatus,
   deleteEnquiry,
 } from "@/lib/firestore";
+import { describeEnquirySource } from "@/lib/adTracking";
 
 const STATUS_OPTIONS = ["New", "Contacted", "In Discussion", "Won", "Lost"];
 const FILTER_OPTIONS = ["All", ...STATUS_OPTIONS];
@@ -173,6 +176,16 @@ export default function AdminEnquiriesPage() {
                   <p className="text-sm text-muted">
                     {enquiry.country} · {enquiry.needType}
                   </p>
+                  {enquiry.source && (
+                    <p className="mt-1 text-xs text-muted">
+                      Source:{" "}
+                      <span className="text-foreground">
+                        {describeEnquirySource(enquiry.source)}
+                      </span>
+                      {enquiry.source.utm_campaign &&
+                        ` · ${enquiry.source.utm_campaign}`}
+                    </p>
+                  )}
                 </div>
 
                 <span
@@ -238,6 +251,25 @@ export default function AdminEnquiriesPage() {
                   <p className="mt-3 whitespace-pre-wrap text-foreground">
                     {enquiry.message}
                   </p>
+                  {enquiry.source && (
+                    <div className="mt-4 rounded-lg border border-white/10 p-3 text-xs text-muted">
+                      <p className="font-semibold text-foreground">Where they came from</p>
+                      {[
+                        ["Campaign", enquiry.source.utm_campaign],
+                        ["Source / medium", [enquiry.source.utm_source, enquiry.source.utm_medium].filter(Boolean).join(" / ")],
+                        ["Ad / keyword", [enquiry.source.utm_content, enquiry.source.utm_term].filter(Boolean).join(" · ")],
+                        ["Referring website", enquiry.source.referrer],
+                        ["First page visited", enquiry.source.landingPage],
+                        ["Google Ads click", enquiry.source.gclid ? "Yes" : ""],
+                      ]
+                        .filter(([, value]) => value)
+                        .map(([label, value]) => (
+                          <p key={label} className="mt-1">
+                            <span className="text-foreground">{label}:</span> {value}
+                          </p>
+                        ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -1036,6 +1036,18 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Worth a look in the admin panel:** the project "Travel agency" (the second one) uses the same screenshots as "Travel Agency Booking Website" and still has the e-commerce description ("An online store for browsing products...") — it looks like a leftover starter project that was partly edited.
 
+### 2026-11-11 — Ads & Tracking: ready to run Meta / Google ads for client leads
+**What was asked:** start running ads to get more clients.
+
+**What was built:**
+- **New admin page "Ads & Tracking"** (`/admin/ads-tracking`): paste the Meta Pixel ID and Google Ads tag ID + conversion labels. Blank = that platform stays off. Invalid IDs are rejected. Also generates tagged links (with the campaign name) to use as the ad's website link.
+- **Conversion tracking on public pages only** (`components/AdTracking.js`, `lib/adTracking.js`): a sent enquiry is reported as a "Lead", a WhatsApp/email/phone tap as a "Contact", plus page views. The admin panel is never tracked.
+- **Every enquiry now records where it came from** (campaign, ad click, referring website, first page visited). The admin Enquiries list shows a "Source" line (Google Ads / Meta Ads / Direct / website) and the full details when expanded.
+
+**Proof:** lint and production build pass; source-labelling and ID validation checked with sample inputs. Not yet tested with real ad accounts — no IDs exist yet.
+
+**Still to do before ads go live:** create the Meta / Google Ads accounts and paste the IDs in; add a Privacy Policy page (expected by both ad platforms when tracking is used).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._

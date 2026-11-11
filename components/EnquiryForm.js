@@ -5,6 +5,8 @@
 // of this logic, not two that could drift apart. On success, the fields
 // are replaced with a short thank-you message, right where the form was.
 // Runs in the browser because it reacts to typing and the button click.
+// A successful send is reported to the ad platforms as a "Lead" (see
+// lib/adTracking.js), along with where the visitor originally came from.
 // Each label is linked to its field, and error messages are announced
 // with the field they belong to, so the form works with screen readers.
 
@@ -18,6 +20,7 @@ import {
   recordEnquirySubmission,
 } from "@/lib/utils";
 import { countries } from "@/data/countries";
+import { getAttributionForEnquiry, trackLead } from "@/lib/adTracking";
 
 const NEED_OPTIONS = ["Website", "Mobile App", "Both", "Not sure yet"];
 
@@ -99,7 +102,10 @@ export default function EnquiryForm() {
     }
 
     setIsSending(true);
-    const result = await addEnquiry(values);
+    const result = await addEnquiry({
+      ...values,
+      source: getAttributionForEnquiry(),
+    });
     setIsSending(false);
 
     if (!result.success) {
@@ -108,6 +114,7 @@ export default function EnquiryForm() {
     }
 
     recordEnquirySubmission();
+    trackLead({ needType: values.needType });
     setIsSent(true);
   }
 
