@@ -102,10 +102,8 @@ export default function EnquiryForm() {
     }
 
     setIsSending(true);
-    const result = await addEnquiry({
-      ...values,
-      source: getAttributionForEnquiry(),
-    });
+    const source = getAttributionForEnquiry();
+    const result = await addEnquiry({ ...values, source });
     setIsSending(false);
 
     if (!result.success) {
@@ -115,6 +113,18 @@ export default function EnquiryForm() {
 
     recordEnquirySubmission();
     trackLead({ needType: values.needType });
+
+    // Emails the business owner about the new enquiry (see
+    // app/api/enquiry-notification/route.js). The enquiry is already
+    // safely saved above, so this is fire-and-forget: the visitor sees the
+    // thank-you message straight away, and a failed email never shows them
+    // an error. `keepalive` lets it finish even if they leave the page.
+    fetch("/api/enquiry-notification", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...values, source }),
+      keepalive: true,
+    }).catch(() => {});
     setIsSent(true);
   }
 

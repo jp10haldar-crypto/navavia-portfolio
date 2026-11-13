@@ -1055,6 +1055,15 @@ once the live-site problem is solved — see the on-page warning banner.
 
 **Proof:** lint and production build pass. Not clicked through against the live database from this computer (no Firebase keys here).
 
+### 2026-11-13 — Email notification for every new enquiry
+**What was asked:** get an email every time an enquiry arrives.
+
+**What was built:** after an enquiry is saved, the form calls a new server route (`app/api/enquiry-notification/route.js`) that emails it through Gmail (nodemailer). The email shows every field plus where the visitor came from (Google Ads / Meta Ads / campaign), and "Reply" goes straight to the client. It only ever emails the owner's own address (set in Vercel), every field is length-limited and HTML-escaped, and each visitor is limited to a few emails an hour. If the email fails, the enquiry is still saved and the visitor still sees the thank-you message.
+
+**Needs (in Vercel → Settings → Environment Variables):** `GMAIL_USER`, `GMAIL_APP_PASSWORD` (a Gmail App password), optional `ENQUIRY_NOTIFY_TO`. Until these are set, no emails are sent.
+
+**Proof:** lint and build pass; tested the route locally: missing settings, bad requests, invalid enquiries and the per-visitor limit are all rejected correctly, and a real attempt reached Gmail's server (rejected only because a fake password was used).
+
 ## IN PROGRESS
 
 _Nothing in progress right now._
